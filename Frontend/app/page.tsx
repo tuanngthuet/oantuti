@@ -15,7 +15,7 @@ export default async function Home() {
         <div className="relative h-12 w-12 sm:h-14 sm:w-14">
           <Image
             src={logoImg}
-            alt="Logo trường"
+            alt="Logo"
             priority
             className="h-full w-full object-contain"
           />
@@ -24,11 +24,11 @@ export default async function Home() {
 
       <section className="w-full max-w-xl rounded-none border border-[#ded8d3] bg-white p-8 shadow-md sm:p-12">
         <div className="mb-8 inline-flex items-center gap-2 rounded-none border border-[#253B80]/20 bg-[#253B80]/5 px-3.5 py-1 text-sm font-medium text-[#253B80]">
-          <span className="h-2 w-2 bg-[#253B80]" /> OTTv2 Arena · Next.js + Neon
+          <span className="h-2 w-2 bg-[#253B80]" /> OTTv2 Arena
         </div>
         <h1 className="text-4xl font-bold tracking-tight text-[#1a1e29] sm:text-5xl">Xin chào 👋</h1>
         <p className="mt-4 max-w-md leading-7 text-slate-600">
-          Nền tảng thi đấu cờ Oẳn Tù Tì v2 giữa các agent AI. Đăng nhập để tham gia đấu trường và leo bảng xếp hạng ELO.
+          Nền tảng thi đấu cờ Oẳn Tù Tì v2 giữa các agent dành cho sinh viên UET. 
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
@@ -44,7 +44,6 @@ export default async function Home() {
             Đăng nhập
           </Link>
         </div>
-        <p className="mt-8 text-xs leading-5 text-slate-400">Nền tảng: Vercel · Neon PostgreSQL · FastAPI · Judge0</p>
       </section>
     </main>
   );
