@@ -18,7 +18,7 @@ class MatchStatus(str, Enum):
 class CreateMatchRequest(BaseModel):
     agent1_code: str = Field(..., description="Mã nguồn Python của agent 1 (Player 1/Blue)")
     agent2_code: str = Field(..., description="Mã nguồn Python của agent 2 (Player 2/Red)")
-    max_moves: Optional[int] = Field(None, description="Giới hạn số nước tối đa (None = dùng config mặc định)")
+    max_moves: Optional[int] = Field(None, ge=1, description="Giới hạn số nước tối đa (None = dùng config mặc định)")
 
     model_config = {
         "json_schema_extra": {

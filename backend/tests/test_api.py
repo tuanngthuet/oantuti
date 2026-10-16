@@ -111,6 +111,16 @@ class TestMatchCRUD:
         })
         assert resp.status_code == 200
 
+    @pytest.mark.parametrize("max_moves", [0, -1])
+    def test_create_match_rejects_non_positive_limit(self, client, max_moves):
+        resp = client.post("/matches/", json={
+            "agent1_code": RANDOM_AGENT_CODE,
+            "agent2_code": RANDOM_AGENT_CODE,
+            "max_moves": max_moves,
+        })
+        assert resp.status_code == 422
+        assert client.get("/matches/").json()["total"] == 0
+
     def test_list_matches_empty(self, client):
         resp = client.get("/matches/")
         assert resp.status_code == 200
@@ -283,6 +293,72 @@ class TestMatchStep:
 # ─── Run to End Tests ──────────────────────────────────────────────────────────
 
 class TestRunToEnd:
+    @pytest.mark.parametrize("endpoint,max_moves", [("step", 1), ("run", 5)])
+    def test_move_limit_finishes_match(self, client, endpoint, max_moves):
+        match_id = client.post("/matches/", json={
+            "agent1_code": RANDOM_AGENT_CODE,
+            "agent2_code": RANDOM_AGENT_CODE,
+            "max_moves": max_moves,
+        }).json()["match_id"]
+
+        async def first_valid_move(agent_code, observation, configuration=None):
+            return {
+                "success": True, "move": observation["valid_moves"][0],
+                "stdout": "", "stderr": "", "error": None,
+            }
+
+        with patch.object(
+            get_match_service()._judge0, "execute_agent",
+            side_effect=first_valid_move,
+        ) as execute:
+            response = client.post(f"/matches/{match_id}/{endpoint}")
+            assert response.status_code == 200
+            result = response.json()
+            assert result["game_over"] is True
+            assert result["winner"] is None
+            assert result["win_reason"] == f"Đạt giới hạn {max_moves} nước."
+            if endpoint == "run":
+                assert len(result["steps"]) == max_moves
+                assert result["steps"][-1]["game_over"] is True
+                assert result["steps"][-1]["error"] is None
+            else:
+                assert result["move"] is not None
+                assert result["error"] is None
+
+            state = client.get(f"/matches/{match_id}").json()
+            assert state["status"] == "finished"
+            assert state["game_over"] is True
+            assert state["move_count"] == max_moves
+            assert get_match_service().get_match(match_id).finished_at is not None
+
+            # A later request must not execute the agent or change the board.
+            client.post(f"/matches/{match_id}/step")
+            assert execute.call_count == max_moves
+            assert client.get(f"/matches/{match_id}").json() == state
+
+    def test_winning_on_last_move_is_not_a_draw(self, client):
+        match_id = client.post("/matches/", json={
+            "agent1_code": RANDOM_AGENT_CODE,
+            "agent2_code": RANDOM_AGENT_CODE,
+            "max_moves": 1,
+        }).json()["match_id"]
+        match = get_match_service().get_match(match_id)
+        match.engine.state.board[7][7] = match.engine.state.board[3][1]
+        match.engine.state.board[3][1] = None
+
+        with patch.object(
+            get_match_service()._judge0, "execute_agent", new_callable=AsyncMock,
+        ) as execute:
+            execute.return_value = {
+                "success": True,
+                "move": {"from_col": 7, "from_row": 7, "to_col": 8, "to_row": 8},
+                "stdout": "", "stderr": "", "error": None,
+            }
+            result = client.post(f"/matches/{match_id}/run").json()
+        assert result["game_over"] is True
+        assert result["winner"] == 1
+        assert "giới hạn" not in result["win_reason"]
+
     def test_run_small_match(self, client):
         """Chạy trận giới hạn 5 nước."""
         create_resp = client.post("/matches/", json={
