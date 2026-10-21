@@ -209,6 +209,13 @@ class MatchService:
                 agent_stdout=agent_stdout,
             )
 
+        # Kết thúc hòa ngay sau nước cuối, nhưng giữ kết quả thắng của engine.
+        if not apply_result["game_over"] and match.engine.state.move_count >= match.max_moves:
+            match.engine.state.game_over = True
+            match.engine.state.win_reason = f"Đạt giới hạn {match.max_moves} nước."
+            apply_result["game_over"] = True
+            apply_result["win_reason"] = match.engine.state.win_reason
+
         # Nước đi hợp lệ
         if apply_result["game_over"]:
             match.status = MatchStatus.FINISHED
