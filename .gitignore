@@ -1,0 +1,32 @@
+# Environment files (keep *.env.example tracked)
+.env
+*.env
+.env.*
+!.env.example
+!*.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Node / Next.js
+node_modules/
+Frontend/.next/
+Frontend/.next-*/
+Frontend/out/
+Frontend/.vercel/
+
+# Runtime logs & PID files
+*.log
+*.pid
+logs/*.log
+logs/*.pid
+
+# OS / Editor
+.DS_Store
+Thumbs.db
