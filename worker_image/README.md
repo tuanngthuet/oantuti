@@ -1,180 +1,82 @@
-# Worker Python trong một image
+# 🐳 OTTv2 Arena — Python Sandbox Worker (Rating & Friendly)
 
-Worker này chứa supervisor, runtime, game engine, queue, lease và callback ngay
-trong `worker_image/`. Entrypoint `main.py` dùng Python local trong sandbox Bubblewrap.
-Không cần Judge0, Redis thực thi, Docker-in-Docker, Docker socket hay cổng public.
-Backend FastAPI và frontend Next.js hiện tại vẫn cần chạy bên ngoài container.
+Image Worker độc lập dùng để xử lý các trận đấu xếp hạng (Rating) và giao hữu (Friendly). Tích hợp sẵn supervisor, runtime, game engine và sandbox **Bubblewrap** trong một container duy nhất.
 
-Mã nguồn chính:
+---
 
-- `game_engine.py`: luật và trạng thái bàn cờ.
-- `worker.py`: điều khiển trận, queue/callback và executor Python sandbox.
-- `supervisor.py`, `runtime.py`: quản lý worker và process xử lý trận.
-- `main.py`, `runner.py`, `sandbox_launcher.py`: chạy Python trong sandbox.
+## 📑 Mục lục
+1. [Cơ chế hoạt động](#1-cơ-chế-hoạt-động)
+2. [Cấu trúc mã nguồn](#2-cấu-trúc-mã-nguồn)
+3. [Cấu hình biến môi trường](#3-cấu-hình-biến-môi-trường)
+4. [Khởi chạy với Docker Compose](#4-khởi-chạy-với-docker-compose)
+5. [Cơ chế bảo mật Sandbox](#5-cơ-chế-bảo-mật-sandbox)
 
-Không cần thư mục `worker/` cũ để chạy, build hoặc kiểm thử.
+---
 
-## Chạy
+## 1. Cơ chế hoạt động
+Worker hoạt động theo mô hình kéo (Pull-based queue):
+1. Gửi heartbeat định kỳ và lease trận đấu từ Backend FastAPI.
+2. Nạp mã nguồn 2 Agent vào môi trường sandbox cô lập.
+3. Cho 2 Agent đối đầu từng lượt thông qua Game Engine nội bộ (giới hạn tối đa 200 nước).
+4. Đóng gói kết quả trận đấu, log từng nước đi và callback trực tiếp về Frontend Next.js.
 
-Từ repository root, có thể dùng script để build, self-check và chạy bản mới:
+---
 
+## 2. Cấu trúc mã nguồn
+
+```text
+worker_image/
+├── compose.yaml          # File định nghĩa Docker Compose service
+├── Dockerfile            # Định nghĩa image có sẵn Bubblewrap + Python
+├── game_engine.py        # Bản sao engine đảm bảo tính nhất quán
+├── main.py               # Entrypoint khởi động worker
+├── runner.py             # Điều phối vòng lặp lượt đi giữa 2 bot
+├── sandbox_launcher.py   # Cấu hình bubblewrap tạo user namespace
+├── supervisor.py         # Quản lý tiến trình và xử lý timeout
+├── worker.py             # Giao tiếp API với Backend & Frontend
+└── README.md             # Tài liệu này
+```
+
+---
+
+## 3. Cấu hình biến môi trường
+
+Sao chép `.env.example` thành `.env`:
 ```bash
+cp worker_image/.env.example worker_image/.env
+```
+
+* `BACKEND_URL`: URL Backend (`http://host.docker.internal:8000`).
+* `FRONTEND_URL`: URL Frontend nhận callback (`http://host.docker.internal:3000`).
+* `WORKER_SECRET`: Khóa bí mật xác thực với Backend.
+* `WORKER_CALLBACK_SECRET`: Khóa bí mật gửi kết quả về Frontend.
+* `WORKER_ID`: Tên định danh duy nhất của Worker.
+* `AGENT_CPU_SECONDS`: Giới hạn CPU (mặc định: `2` giây).
+* `AGENT_WALL_SECONDS`: Giới hạn thời gian thực (mặc định: `4` giây).
+* `AGENT_MEMORY_MB`: Giới hạn RAM (mặc định: `128` MB).
+
+---
+
+## 4. Khởi chạy với Docker Compose
+
+Sử dụng script tiện ích từ repository root:
+```bash
+# Build và chạy worker
 ./dockerworker.sh
+
+# Xem log thực thi
 ./dockerworker.sh logs
-./dockerworker.sh status
+
+# Dừng worker
 ./dockerworker.sh stop
 ```
 
-Không cần `cd` về repository trước khi gọi script bằng đường dẫn tuyệt đối. Script
-kiểm tra sandbox trước khi tạo lại container. `build` chỉ build/self-check; chạy
-không tham số hoặc `update` mới áp dụng image bằng cách recreate container. Nếu
-đã dừng worker trong admin, trạng thái đó vẫn được giữ; bấm Bật worker để xử lý job.
+---
 
-Từ thư mục gốc repository:
+## 5. Cơ chế bảo mật Sandbox
+* **Chặn mạng hoàn toàn:** Không có quyền truy cập Internet hay socket mạng nội bộ.
+* **Hạn chế Syscalls (Seccomp):** Chặn các lệnh fork bom, tạo tiến trình con (`subprocess`).
+* **Hệ thống tệp chỉ đọc (Read-only Filesystem):** Không thể chỉnh sửa hay đọc trộm mã nguồn của đối thủ hoặc file hệ thống của host.
 
-```bash
-cp worker_image/.env.example worker_image/.env
-# Điền URL và secrets trong worker_image/.env.
-docker compose -f worker_image/compose.yaml build
-docker compose -f worker_image/compose.yaml run --rm worker-python --check
-docker compose -f worker_image/compose.yaml up -d
-docker compose -f worker_image/compose.yaml logs -f
-```
-
-Build context là repository root; toàn bộ mã worker nằm trong `worker_image/`.
-Image mặc định chỉ COPY những file được liệt kê, không COPY `.env`.
-`--check` kiểm tra sandbox, không đăng ký hay nhận job. Cần điền secrets hợp lệ vì
-entrypoint cũng kiểm tra cấu hình. Startup tự kiểm tra và từ chối nhận job nếu
-sandbox không hoạt động; không có chế độ tự hạ xuống subprocess không cách ly.
-
-Khi backend/frontend chạy trên host, dùng `host.docker.internal` như `.env.example`
-và đảm bảo dịch vụ lắng nghe trên interface mà container truy cập được. Trong
-production, dùng URL thực của dịch vụ. Không dùng `localhost` để trỏ đến host.
-
-Image chạy dưới UID 10001, filesystem container chỉ đọc. Compose dành 1 GiB RAM,
-không swap và tối đa 4 CPU cho toàn worker; chỉnh cùng với giới hạn concurrency.
-Giới hạn tổng container cần bao gồm bộ nhớ worker, sandbox và các agent đồng thời.
-Nếu container hết RAM, job đang chạy được lease recovery thu hồi sau đó.
-
-## Tải ZIP để chuyển máy
-
-Hướng dẫn ngắn cho Linux/Windows: [PORTABLE.md](PORTABLE.md).
-
-```bash
-wget -O oantuti-worker.zip https://github.com/tuanngthuet/oantuti/releases/download/worker-portable-v1/oantuti-worker.zip
-unzip oantuti-worker.zip
-cd oantuti-worker
-bash worker.sh
-```
-
-Dừng: `bash worker.sh stop`. Windows: giải nén rồi chạy `worker.cmd`, dừng bằng
-`worker.cmd stop`. Script tự load image, kiểm tra sandbox rồi chạy nền.
-Bản ZIP công khai không chứa secrets: điền hai secret trong `.env.example` rồi lưu
-thành `.env` trước khi chạy. Xem [PORTABLE.md](PORTABLE.md).
-
-Xuất ZIP công khai: `python3 worker_image/export-bundle.py --public`.
-Kết quả: `worker_image/public-portable/` và `worker_image/oantuti-worker.zip`.
-
-Xuất ZIP riêng có secrets: `./dockerworker.sh export`. Kết quả:
-`worker_image/portable/` và `worker_image/oantuti-worker-with-secrets.zip`.
-Gói này giữ secrets/tham số từ `.env` và hai URL Vercel; chỉ chia sẻ riêng.
-
-Chỉ cập nhật tài liệu/script và đóng ZIP từ image đã xuất:
-`python3 worker_image/export-bundle.py --package-only` (thêm `--public` cho bản công khai).
-
-## Nhiều worker Python
-
-Các worker Python dùng chung backend/frontend/secrets và queue FIFO. Backend claim
-atomic nên mỗi delivery chỉ có một owner. Worker xử lý rating, validation và
-friendly. Không có executor HTTP, cấu hình hay script cài Judge0 cho worker chính.
-Runner chung kết độc lập nằm ngoài phần này.
-
-Worker ID là hash của machine identity và tên. Compose mount `/etc/machine-id`
-read-only để identity không đổi khi recreate. Mỗi máy có thể dùng cùng tên
-`local-python`; trên cùng host, mỗi worker phải có tên khác nhau. Khi chạy native
-trên Linux đã cài Bubblewrap và dependencies:
-
-```bash
-cd worker_image
-python3 main.py --name alpha
-python3 main.py --name beta
-```
-
-Admin `/admin/workers` điều khiển start, pause/resume, graceful/immediate stop và
-concurrency riêng cho từng worker. Supervisor vẫn online khi runtime bị dừng.
-Trạng thái và concurrency lưu trong Redis; `MAX_CONCURRENT` chỉ dùng cho lần đăng
-ký đầu. Worker trùng machine/name bị chặn trước khi self-check hoặc đăng ký.
-
-`judge0_url` chỉ còn là tên trường giao thức cũ để tương thích dữ liệu hiện có;
-giá trị worker gửi luôn là `local-python://bubblewrap`. Đây không phải URL HTTP
-và không được dùng để kết nối dịch vụ thực thi bên ngoài.
-
-## Giới hạn và sandbox
-
-Mỗi **lượt** tạo process Python mới, không lưu globals giữa các lượt. Observation/configuration vào stdin, nước đi JSON ra stdout;
-tuple/list bốn tọa độ và object vẫn được hỗ trợ như trước. Rating/friendly tối đa 200 nước, không dừng sớm khi lặp thế cờ; validation tối đa
-60 nước. Retry hạ tầng và callback fencing dùng chung code hiện tại. Frontend tính
-phạt draw rating từ replay (4–32 điểm mỗi bên), đồng thời giảm σ để tăng độ tin cậy
-và giúp scheduler kết thúc hiệu chỉnh. Friendly không thay đổi BXH. Chính sách này
-nằm ở frontend và dùng chung cho mọi worker Python.
-
-- `AGENT_CPU_SECONDS`: CPU time, hard `RLIMIT_CPU`.
-- `AGENT_WALL_SECONDS`: thời gian thực, kể cả khởi động sandbox; quá hạn thì kill.
-- `AGENT_MEMORY_MB`: MiB không gian địa chỉ, hard `RLIMIT_AS`, **không phải RSS**.
-- `AGENT_OUTPUT_BYTES`: tổng stdout/stderr; vượt giới hạn thì dừng agent.
-- `AGENT_SOURCE_BYTES`: giới hạn source trước khi tạo process.
-
-Bubblewrap tạo namespace riêng cho PID, network, mount, IPC và UTS; agent không
-thấy `/app`, `.env`, thư mục home hay filesystem host. Chỉ mount Python/system
-libraries, source agent và launcher ở chế độ chỉ đọc; không có thư mục ghi file.
-Environment sạch, không chứa secrets. Launcher đặt hard resource limits và
-seccomp trước khi chạy code: cấm tạo process/thread, socket và thay namespace.
-Agent chỉ có Python standard library, không cài dependency của worker vào sandbox.
-Code cần network, subprocess, threading hoặc ghi file sẽ không được hỗ trợ.
-
-Lỗi code, nước sai, CPU/wall timeout, thiếu memory và output quá lớn là lỗi agent.
-Không khởi tạo được sandbox là lỗi hạ tầng; không bị ghi thành agent thua.
-Pause không ngắt trận; immediate stop hoặc mất lease hủy runner đang chạy. Job
-chưa hoàn tất được recovery như worker cũ.
-
-Host cần Linux hỗ trợ unprivileged user namespaces. Compose nới profile seccomp
-và AppArmor **của outer container** để Bubblewrap tạo nested namespaces; filter
-seccomp riêng vẫn áp dụng cho agent. Không dùng `--privileged` hay mount Docker
-socket. Một số môi trường managed/LXC chặn user namespaces ở cấp host; `--check`
-sẽ báo lỗi và cần cấu hình host phù hợp. Sandbox này chia sẻ kernel host, không
-phải VM; dùng kernel được cập nhật cho môi trường nhận code không tin cậy.
-
-Tham khảo: [Bubblewrap](https://github.com/containers/bubblewrap),
-[Python resource limits](https://docs.python.org/3/library/resource.html),
-[Docker seccomp](https://docs.docker.com/engine/security/seccomp/).
-
-## Kiểm tra
-
-```bash
-# Test target không cần .env hay dịch vụ bên ngoài.
-docker compose -f worker_image/compose.yaml --profile test build worker-tests
-docker compose -f worker_image/compose.yaml --profile test run --rm worker-tests
-
-# Hoặc trên host đã cài backend/requirements.txt:
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=backend python3 -m pytest -q worker_image/tests backend/tests/test_worker.py backend/tests/test_supervisor.py backend/tests/test_queue.py backend/tests/test_worker_control.py
-```
-
-Các test sandbox thực cần Bubblewrap, `/usr/bin/python3`, libseccomp và quyền tạo
-user namespaces. Không có sandbox sẽ skip các test này; có thể bắt buộc chạy bằng
-`REQUIRE_SANDBOX_TESTS=1` (test target luôn bật cờ này). Không test nào cần truy cập
-database thật. Test image là target riêng; production image không chứa test dependencies.
-
-Để thử end-to-end bằng frontend/backend local, production Docker image và Neon/Redis
-thật đã cấu hình trong repository:
-
-```bash
-node worker_image/test-local.mjs
-```
-
-Lệnh này mặc định cần cổng 3000/8000 đang trống; dùng `LOCAL_TEST_FRONTEND_PORT`
-và `LOCAL_TEST_BACKEND_PORT` để chọn cổng khác. Cần dependencies frontend/backend đã cài và image
-đã build. Script tạo schema/Redis namespace riêng, nộp agent qua API, kiểm tra
-validation (kể cả lỗi Python, memory, timeout và output), rating/TrueSkill, friendly,
-replay, admin controls và ACK. Khi xong, script dừng các dịch vụ vừa tạo, xóa dữ liệu
-test và giữ báo cáo/log trong `logs/worker_image_local_*/`. Không dùng dữ liệu public
-của hệ thống cho các trận test.
+---
+[⬅ Quay lại README Tổng](../README.md)

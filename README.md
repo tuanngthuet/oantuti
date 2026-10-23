@@ -1,4 +1,4 @@
-# 🏆 OTTv2 Arena — Hệ Thống Thi Đấu Agent AI Oẳn Tù Tì
+# 🏆 OTTv2 Arena — Hệ Thống Đánh Giá & Thi Đấu Agent AI Oẳn Tù Tì
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js" alt="Next.js 15" />
@@ -14,11 +14,13 @@
 ## 📑 Mục lục
 1. [Giới thiệu](#1-giới-thiệu)
 2. [Kiến trúc hệ thống](#2-kiến-trúc-hệ-thống)
-3. [Tính năng nổi bật](#3-tính-năng-nổi-bật)
-4. [Thể lệ cuộc thi & Luật chơi](#4-thể-lệ-cuộc-thi--luật-chơi)
-5. [Quy chuẩn kỹ thuật khi lập trình Agent](#5-quy-chuẩn-kỹ-thuật-khi-lập-trình-agent)
-6. [Quy trình tổ chức giải đấu](#6-quy-trình-tổ-chức-giải-đấu)
-7. [Hướng dẫn khởi chạy & Cài đặt](#7-hướng-dẫn-khởi-chạy--cài-đặt)
+3. [Tài liệu thành phần (Sub-module Docs)](#3-tài-liệu-thành-phần-sub-module-docs)
+4. [Tính năng nổi bật](#4-tính-năng-nổi-bật)
+5. [Thể lệ cuộc thi & Luật chơi](#5-thể-lệ-cuộc-thi--luật-chơi)
+6. [Quy chuẩn kỹ thuật khi lập trình Agent](#6-quy-chuẩn-kỹ-thuật-khi-lập-trình-agent)
+7. [Quy trình tổ chức giải đấu](#7-quy-trình-tổ-chức-giải-đấu)
+8. [Hướng dẫn khởi chạy & Cài đặt](#8-hướng-dẫn-khởi-chạy--cài-đặt)
+9. [Thành viên thực hiện](#9-thành-viên-thực-hiện)
 
 ---
 
@@ -26,7 +28,7 @@
 
 **OTTv2 Arena** (Oẳn Tù Tì v2) là nền tảng thi đấu và đánh giá năng lực tự động giữa các Agent AI. Dựa trên biến thể trò chơi dân gian Oẳn Tù Tì kết hợp cùng tư duy chiến thuật cờ bàn (board game) trên lưới 9×9, hệ thống cung cấp một sân chơi đối kháng khép kín, công bằng và khách quan cho sinh viên.
 
-Dự án được xây dựng trong khuôn khổ môn học Lập trình mạng (INT3304 3) — Trường Đại học Công nghệ, ĐHQGHN (VNU-UET).
+Dự án được xây dựng trong khuôn khổ môn học **Lập trình mạng (INT3304 3)** — Trường Đại học Công nghệ, ĐHQGHN (VNU-UET).
 
 ### 👥 Nhóm thực hiện: Nhóm 1
 1. **Nguyễn Thiên Tuấn**
@@ -38,7 +40,7 @@ Dự án được xây dựng trong khuôn khổ môn học Lập trình mạng 
 
 ## 2. Kiến trúc hệ thống
 
-Dự án áp dụng mô hình phân tán giữa tầng hiển thị trực tuyến, cơ sở dữ liệu phi máy chủ (Serverless), và cụm xử lý/chấm điểm trận đấu độc lập bảo mật.
+Dự án áp dụng mô hình phân tán (Distributed Architecture), tách biệt giữa giao diện trực tuyến, cơ sở dữ liệu serverless và cụm máy chủ chấm giải cục bộ thông qua đường truyền bảo mật.
 
 ### 2.1. Sơ đồ kiến trúc tổng quan
 
@@ -68,34 +70,37 @@ Dự án áp dụng mô hình phân tán giữa tầng hiển thị trực tuy�
                                                   ▼
                                    ┌──────────────────────────────┐
                                    │  Execution Sandbox / Worker  │  ← Docker Container
-                                   │  (Judge0 CE / Bubblewrap)    │
+                                   │  (Bubblewrap Isolation)      │
                                    │  Thực thi Python 3 an toàn   │
                                    │  Giới hạn RAM, CPU, Timeout  │
                                    └──────────────────────────────┘
 ```
 
-### 2.2. Chi tiết các thành phần công nghệ
+---
 
-| Thành phần | Công nghệ sử dụng | Nhiệm vụ chính |
-| :--- | :--- | :--- |
-| **Frontend** | Next.js 15, React 19, Tailwind CSS | Giao diện phong cách Neo-Brutalist phẳng, hiển thị bàn cờ thời gian thực, quản lý thí sinh và phân tích ván đấu. |
-| **Backend API** | Python 3.10+, FastAPI, Uvicorn | Quản lý vòng đời trận đấu, điều phối hàng đợi (Queue), xác thực lease và tính toán trạng thái bàn cờ. |
-| **Game Engine** | Pure Python 3 | Mô phỏng chính xác logic bàn cờ 9×9, kiểm tra tính hợp lệ của từng nước đi, xác định trạng thái kết thúc trận. |
-| **Execution Sandbox**| Docker (Judge0 CE / Bubblewrap) | Chạy mã nguồn Python của thí sinh trong môi trường cô lập nghiêm ngặt (Isolated Sandbox), kiểm soát CPU, RAM và Timeout. |
-| **Database** | PostgreSQL (Neon Database) | Lưu trữ người dùng, phiên bản mã nguồn Agent, lịch sử từng nước đi (`history replay`), bảng điểm ELO. |
-| **Network & Proxy** | Cloudflare Tunnel | Mở kênh kết nối an toàn (TLS Reverse Proxy) từ Internet về máy chủ chấm cục bộ mà không cần mở Port NAT. |
+## 3. Tài liệu thành phần (Sub-module Docs)
+
+Để tìm hiểu sâu hơn về kiến trúc và cách thiết lập từng module con, vui lòng xem các tài liệu hướng dẫn chuyên biệt:
+
+| Phân hệ | Thư mục | Tài liệu chi tiết | Mô tả  |
+| :--- | :--- | :---: | :--- |
+| **Frontend Web** | [`Frontend/`](Frontend/) | [📄 Frontend Guide](Frontend/README.md) | Giao diện Next.js 15, CodeMirror, Replay Player, Finals UI. |
+| **Backend Server** | [`backend/`](backend/) | [📄 Backend Guide](backend/README.md) | FastAPI, pure Python engine 9x9, Queue, API Endpoints. |
+| **Sandbox Worker** | [`worker_image/`](worker_image/) | [📄 Worker Image Guide](worker_image/README.md) | Docker sandbox Bubblewrap cho giải Rating & Friendly. |
+| **Finals Workers** | [`worker_ck/`](worker_ck/) | [📄 Finals Worker Guide](worker_ck/README.md) | 5 cụm worker chấm Vòng Chung kết độc lập, mã hóa token. |
+| **Testing Kit** | [`local_runner/`](local_runner/) | [📄 Local Runner Guide](local_runner/README.md) | Bộ công cụ test bot offline, 0 dependencies, human mode. |
 
 ---
 
-## 3. Tính năng nổi bật
+## 4. Tính năng nổi bật
 
-### 3.1. Dành cho Thí sinh (Người chơi)
+### 4.1. Dành cho Thí sinh (Người chơi)
 * **Xác thực an toàn:** Đăng ký, đăng nhập bảo mật bằng JWT lưu trong `HttpOnly Cookie`, mật khẩu được mã hóa chuẩn Bcrypt.
 * **Soạn thảo & Nộp Agent trực quan:**
   * Trình soạn thảo tích hợp **CodeMirror** (hỗ trợ gợi ý cú pháp Python, giao diện One Dark, đếm dung lượng mã nguồn giới hạn 64KB).
   * Chức năng **"🔍 Kiểm tra tính hợp lệ"**: Tự động gửi code vào Sandbox chạy thử nghiệm một lượt đi thực tế trước khi lưu chính thức.
   * Quản lý phiên bản bot (`v1`, `v2`,...), theo dõi trạng thái phê duyệt (`Pending`, `Active`, `Rejected`).
-* **Đấu giao hữu trực quan (Friendly Match):**
+* **Đấu giao hữu trực quan (Friendly Match Realtime):**
   * Tùy chọn 2 bot AI bất kỳ để thi đấu 1v1 ngay trên bàn cờ trực tiếp mà không ảnh hưởng điểm xếp hạng.
   * Cập nhật từng nước đi theo thời gian thực mượt mà thông qua cơ chế **Server-Sent Events (SSE)**.
 * **Hệ thống Rank ELO & Bảng xếp hạng:**
@@ -110,7 +115,7 @@ Dự án áp dụng mô hình phân tán giữa tầng hiển thị trực tuy�
   * Tải và phát lại chi tiết từng lượt đi của bất kỳ ván đấu nào trong lịch sử.
   * Thanh trượt tua thời gian, bộ nút điều khiển đa dạng (*Về đầu, Lùi bước, Tự động phát, Tiến bước, Về cuối*), tùy chỉnh tốc độ từ 100ms – 2000ms/bước.
 
-### 3.2. Dành cho Ban tổ chức (Quản trị viên - Admin)
+### 4.2. Dành cho Ban tổ chức (Quản trị viên - Admin)
 * **Kiểm duyệt Agent:** Thẩm định mã nguồn của thí sinh, chạy thử nghiệm sandbox trước khi phê duyệt tham gia đấu giải chính thức.
 * **Quản trị Tournament & Worker Session:**
   * Thiết lập phiên giải đấu, điều chỉnh số trận chạy song song (Concurrency).
@@ -120,9 +125,9 @@ Dự án áp dụng mô hình phân tán giữa tầng hiển thị trực tuy�
 
 ---
 
-## 4. Thể lệ cuộc thi & Luật chơi
+## 5. Thể lệ cuộc thi & Luật chơi
 
-### 4.1. Quy chuẩn bàn cờ & Bố trí ban đầu
+### 5.1. Quy chuẩn bàn cờ & Bố trí ban đầu
 * **Kích thước bàn cờ:** Bàn cờ lưới vuông **9 × 9 ô**, cột ký hiệu từ `a` đến `i` (chỉ số 0 đến 8), hàng ký hiệu từ `1` đến `9` (chỉ số 0 đến 8).
 * **Các loại quân cờ:** Mỗi người chơi sở hữu 10 quân cờ thuộc 3 chủng loại:
   * ✊ **ĐẤM (ROCK):** 3 quân
@@ -138,7 +143,7 @@ Dự án áp dụng mô hình phân tán giữa tầng hiển thị trực tuy�
     * ✋ Lá (4): `8e`, `7f`, `6g`, `5h`
     * ✊ Đấm (3): `8f`, `7g`, `6h`
 
-### 4.2. Quy tắc di chuyển & Cơ chế ăn quân
+### 5.2. Quy tắc di chuyển & Cơ chế ăn quân
 * **Di chuyển:** Mỗi lượt, một quân cờ có thể di chuyển **1 ô** theo **8 hướng** (ngang, dọc, chéo – tương tự như nước đi của quân Vua trong cờ vua).
 * **Quy luật ăn quân (Tương khắc Oẳn Tù Tì):**
   * ✊ **ĐẤM** ăn ✌️ **KÉO**
@@ -148,7 +153,7 @@ Dự án áp dụng mô hình phân tán giữa tầng hiển thị trực tuy�
   * Hai quân **cùng loại không thể ăn nhau** (không thể đi vào ô có quân cùng loại của đối phương).
   * Quân cờ **không được di chuyển vào ô đang có quân của phe mình**.
 
-### 4.3. Điều kiện định đoạt kết quả
+### 5.3. Điều kiện định đoạt kết quả
 Trận đấu kết thúc ngay lập tức khi xuất hiện một trong các trường hợp sau:
 
 1. **Chiếm cứ điểm đối phương:**
@@ -166,7 +171,7 @@ Trận đấu kết thúc ngay lập tức khi xuất hiện một trong các tr
 
 ---
 
-## 5. Quy chuẩn kỹ thuật khi lập trình Agent
+## 6. Quy chuẩn kỹ thuật khi lập trình Agent
 
 Mỗi Agent nộp lên phải là một tập lệnh Python 3 hợp lệ chứa hàm entry-point `agent(observation, configuration)` theo chuẩn:
 
@@ -228,16 +233,16 @@ def agent(observation, configuration):
 
 ---
 
-## 6. Quy trình giải đấu
+## 7. Quy trình tổ chức giải đấu
 
-Hệ thống thi đấu của **OTTv2 Arena** được tổ chức với tính cạnh tranh gồm 3 chế độ thi đấu:
+Hệ thống thi đấu của **OTTv2 Arena** cạnh tranh gồm 3 chế độ:
 
-### 6.1. Chế độ Giao hữu (Private Friendly Match)
-* **Thử nghiệm & Gỡ lỗi:** Thí sinh tự do ghép cặp 1v1 giữa bot của mình với một bot công khai bất kỳ của đối thủ để kiểm tra tính hiệu quả của chiến thuật.
+### 7.1. Chế độ Giao hữu (Private Friendly Match)
+* **Thử nghiệm chiến thuật:** Thí sinh tự do ghép cặp 1v1 giữa bot của mình với một bot công khai bất kỳ của đối thủ để kiểm tra tính hiệu quả của chiến thuật.
 * **Bảo mật Replay:** Chỉ người tạo trận hoặc thành viên cùng đội mới có quyền xem log và Replay ván cờ. Đối thủ **không nhận thông báo và không xem được kết quả/replay**, ngăn chặn hoàn toàn việc bị nghiên cứu chiến thuật trước giải.
-* **Quy chuẩn:** Cấp hạn mức 10 trận/ngày/tài khoản; kết quả **không làm thay đổi điểm ELO**.
+* **Quy chuẩn:** Giới hạn tối đa 200 nước/trận; cấp hạn mức 10 trận/ngày/tài khoản; kết quả **không làm thay đổi điểm ELO**.
 
-### 6.2. Vòng bảng & Bảng xếp hạng ELO (Best Agent Leaderboard)
+### 7.2. Vòng bảng & Bảng xếp hạng ELO (Best Agent Leaderboard)
 * **Matchmaking tự động:** Hệ thống Worker ngầm liên tục bốc thăm ghép cặp các Agent `Public` để thi đấu tích lũy điểm ELO theo công thức chuẩn.
 * **Cơ chế "Best Agent" trên BXH:**
   * Thí sinh có thể nộp và phát triển nhiều phiên bản bot (`v1`, `v2`, `v3`...).
@@ -246,23 +251,23 @@ Hệ thống thi đấu của **OTTv2 Arena** được tổ chức với tính c
 * **Phân cấp danh hiệu ELO:** 👑 *Grandmaster* (≥ 2000), 💎 *Master* (≥ 1800), 🔷 *Expert* (≥ 1600), 🟢 *Intermediate* (≥ 1400), ⚪ *Novice* (< 1400).
 * **Chốt sổ vòng bảng:** Căn cứ bảng xếp hạng Best Agent tại thời điểm đóng sổ để chọn ra **Top 16 hạt giống** bước vào vòng Chung kết.
 
-### 6.3. Vòng Chung kết (Finals Top 16 — Loại trực tiếp)
-* **Nhánh đấu 5 vòng:** Vòng 1/8 (`round_16`) --> Tứ kết (`quarterfinal`) --> Bán kết (`semifinal`) --> Chung kết (`final`) & Tranh hạng ba (`third_place`).
+### 7.3. Vòng Chung kết (Finals Top 16 — Loại trực tiếp)
+* **Nhánh đấu 5 vòng:** Vòng 1/8 (`round_16`) $\rightarrow$ Tứ kết (`quarterfinal`) $\rightarrow$ Bán kết (`semifinal`) $\rightarrow$ Chung kết (`final`) & Tranh hạng ba (`third_place`).
 * **Thể thức 2 ván đổi bên (Home/Away Swap):** Mỗi cặp đấu gồm 2 ván, bắt buộc hoán đổi vị trí cầm quân Xanh (P1) và Đỏ (P2) để triệt tiêu lợi thế đi trước. Nếu hòa điểm (1 - 1), hạt giống có thứ hạng vòng bảng cao hơn sẽ giành quyền đi tiếp.
 * **Nộp bài độc lập từng vòng (Per-round Submissions):** Hệ thống **không tự động lấy code vòng bảng**. Mỗi vòng đấu knock-out, thí sinh phải nộp lại code riêng (được quyền chỉnh sửa để khắc chế đối thủ tiếp theo) và phải vượt qua bài kiểm tra Self-play với đúng Engine của vòng đó.
 * **5 Cụm Worker Sandbox độc lập:** Mỗi vòng chạy trên 1 container Worker riêng biệt với Bubblewrap sandbox cô lập hoàn toàn mạng, file hệ thống và bộ nhớ.
-* **Replay về giải:** Admin khóa mã nguồn trước giờ đấu, tự động ghi nhận kết quả và công bố Replay công khai cho khán giả theo dõi.
+* **Minh bạch & Trọng tài:** Admin khóa mã nguồn trước giờ đấu, tự động ghi nhận kết quả và công bố Replay công khai cho khán giả theo dõi.
 
 ---
 
-## 7. Hướng dẫn khởi chạy & Cài đặt
+## 8. Hướng dẫn khởi chạy & Cài đặt
 
-### 7.1. Yêu cầu hệ thống
+### 8.1. Yêu cầu hệ thống
 * Hệ điều hành: Linux (Ubuntu 20.04+ khuyến nghị) hoặc Windows 11 với WSL 2.
 * Python 3.10+ và Node.js 18.x / 20.x.
 * Docker Engine & Docker Compose.
 
-### 7.2. Cấu hình biến môi trường
+### 8.2. Cấu hình biến môi trường
 Sao chép các file cấu hình mẫu và cập nhật các thông số cần thiết:
 ```bash
 # 1. Cấu hình Backend
@@ -275,7 +280,7 @@ cp Frontend/.env.example Frontend/.env.local
 cp worker_image/.env.example worker_image/.env
 ```
 
-### 7.3. Khởi động nhanh toàn bộ dịch vụ (Development)
+### 8.3. Khởi động nhanh toàn bộ dịch vụ (Development)
 Sử dụng bộ kịch bản tự động được chuẩn bị sẵn trong thư mục gốc:
 
 ```bash
@@ -286,7 +291,7 @@ Sử dụng bộ kịch bản tự động được chuẩn bị sẵn trong th�
 ./start.sh
 ```
 
-### 7.4. Các địa chỉ truy cập cục bộ:
+### 8.4. Các địa chỉ truy cập cục bộ:
 * **Frontend Web:** `http://localhost:3000`
 * **FastAPI Docs (Swagger UI):** `http://localhost:8000/docs`
 * **FastAPI ReDoc:** `http://localhost:8000/redoc`
@@ -296,4 +301,6 @@ Sử dụng bộ kịch bản tự động được chuẩn bị sẵn trong th�
 ```bash
 ./stop.sh
 ```
+
+---
 
