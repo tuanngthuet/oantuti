@@ -9,6 +9,7 @@ type TabId =
   | "overview"
   | "rules"
   | "getting-started"
+  | "local-runner"
   | "evaluation"
   | "finals"
   | "regulations";
@@ -57,6 +58,7 @@ def agent(observation, configuration):
     { id: "overview", label: "Tổng quan", icon: "📌" },
     { id: "rules", label: "Luật thi đấu", icon: "📜" },
     { id: "getting-started", label: "Hướng dẫn & Code mẫu", icon: "💻" },
+    { id: "local-runner", label: "Local Runner & Test máy", icon: "🛠️" },
     { id: "evaluation", label: "Đánh giá & Xếp hạng", icon: "📈" },
     { id: "finals", label: "Vòng Chung kết", icon: "🏆" },
     { id: "regulations", label: "Quy chế & Liêm chính", icon: "⚖️" },
@@ -482,6 +484,234 @@ def agent(observation, configuration):
                   <span className="font-bold text-[#253B80]">Bước 3: Kích hoạt</span>
                   <p className="mt-1 text-slate-600">
                     Agent chuyển sang trạng thái <code>active</code> và tự động tham gia hàng đợi ghép trận xếp hạng.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Callout sang Local Runner */}
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border border-[#253B80]/30 bg-[#253B80]/5 p-5">
+              <div>
+                <p className="font-bold text-[#253B80]">💡 Kiểm thử Agent trước khi nộp?</p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-600">
+                  Bạn có thể tải bộ công cụ <strong>Local Runner</strong> về máy tính cá nhân để chạy thử mô phỏng 9×9, kiểm tra thời gian CPU và đánh với bot mẫu mà không cần kết nối server.
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveTab("local-runner")}
+                className="rounded-none border border-[#253B80] bg-[#253B80] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#1d2e66]"
+              >
+                Xem Hướng dẫn Local Runner →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: LOCAL RUNNER & TẢI ENGINE VỀ MÁY */}
+        {activeTab === "local-runner" && (
+          <div className="space-y-8">
+            <section>
+              <h2 className="text-2xl font-bold text-[#1a1e29]">
+                Bộ Công Cụ Local Runner & Kiểm Thử Cục Bộ
+              </h2>
+              <p className="mt-2 text-slate-600">
+                Tải game engine độc lập về máy tính để chạy mô phỏng, debug bot tự do, đo thời gian tính toán và chơi thử trực tiếp với bot của bạn.
+              </p>
+            </section>
+
+            {/* Khung Tải về từ GitHub */}
+            <div className="border-2 border-[#253B80] bg-[#F5F0ED]/30 p-6 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 border border-[#253B80] bg-[#253B80]/10 px-2.5 py-0.5 text-xs font-bold text-[#253B80]">
+                    📦 TẢI TỪ GITHUB
+                  </span>
+                  <h3 className="mt-2 text-xl font-extrabold text-[#1a1e29]">
+                    Kho lưu trữ Git: OTTv2 Local Runner
+                  </h3>
+                  <p className="mt-1 text-xs text-slate-600">
+                    Thư mục <code className="bg-white px-1.5 py-0.5 font-mono text-[#253B80] font-bold">local_runner/</code> trên nhánh <code>semi_final</code>.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href="https://github.com/tuanngthuet/oantuti/tree/semi_final/local_runner"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 border border-[#253B80] bg-[#253B80] px-5 py-2.5 text-sm font-bold text-white shadow transition hover:bg-[#1d2e66]"
+                  >
+                    <span>🔗 Mở thư mục trên GitHub</span>
+                  </a>
+                  <a
+                    href="https://github.com/tuanngthuet/oantuti/archive/refs/heads/semi_final.zip"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 border border-[#ded8d3] bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-[#253B80] hover:text-[#253B80]"
+                  >
+                    <span>⬇️ Tải file ZIP</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Lệnh Clone */}
+              <div className="mt-5 border-t border-[#ded8d3] pt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Lệnh Clone nhanh qua Git:
+                  </span>
+                  <button
+                    onClick={() => copyCode("git clone -b semi_final https://github.com/tuanngthuet/oantuti.git\ncd oantuti/local_runner", 99)}
+                    className="border border-[#ded8d3] bg-white px-3 py-1 text-xs font-semibold text-[#253B80] hover:bg-stone-50"
+                  >
+                    {copiedIndex === 99 ? "✓ Đã sao chép" : "Sao chép lệnh"}
+                  </button>
+                </div>
+                <pre className="mt-2 overflow-x-auto border border-[#ded8d3] bg-stone-900 p-3 font-mono text-xs text-stone-100">
+{`git clone -b semi_final https://github.com/tuanngthuet/oantuti.git
+cd oantuti/local_runner`}
+                </pre>
+                <p className="mt-2 text-xs text-slate-500">
+                  ✨ <strong>Không cần cài thêm thư viện (Zero dependencies)</strong>: Chỉ cần máy bạn có Python 3.8+ là chạy được ngay lập tức, không cần cài package nào qua pip!
+                </p>
+              </div>
+            </div>
+
+            {/* Cấu trúc các file */}
+            <section>
+              <h3 className="text-lg font-bold text-[#1a1e29]">
+                1. Cấu trúc Thư mục `local_runner/`
+              </h3>
+              <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3 text-xs sm:text-sm">
+                <div className="border border-[#ded8d3] bg-white p-4 shadow-sm">
+                  <div className="font-mono font-bold text-[#253B80]">game_engine.py</div>
+                  <p className="mt-1 text-slate-600">
+                    Mô phỏng 100% luật bàn cờ 9×9, di chuyển 8 hướng, tương khắc Búa-Kéo-Bao, điều kiện thắng và hàm vẽ bàn cờ Terminal.
+                  </p>
+                </div>
+                <div className="border border-[#ded8d3] bg-white p-4 shadow-sm">
+                  <div className="font-mono font-bold text-[#253B80]">runner.py</div>
+                  <p className="mt-1 text-slate-600">
+                    Công cụ dòng lệnh CLI để chạy trận đấu, hỗ trợ chế độ render bàn cờ, chơi trực tiếp với người (human), và đấu hàng loạt tính winrate.
+                  </p>
+                </div>
+                <div className="border border-[#ded8d3] bg-white p-4 shadow-sm">
+                  <div className="font-mono font-bold text-[#253B80]">sample_agents/</div>
+                  <p className="mt-1 text-slate-600">
+                    Thư mục chứa các bot mẫu: <code>starter_agent.py</code> (khung sườn), <code>random_agent.py</code>, và <code>greedy_agent.py</code> (chiến thuật tham lam).
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Hướng dẫn các lệnh sử dụng */}
+            <section>
+              <h3 className="text-lg font-bold text-[#1a1e29]">
+                2. Các Lệnh Chạy Kiểm Thử Tiêu Biểu
+              </h3>
+              <p className="mt-1 text-sm text-slate-600">
+                Mở terminal hoặc PowerShell trong thư mục <code>local_runner/</code> và thử nghiệm:
+              </p>
+
+              <div className="mt-4 space-y-4">
+                {/* Lệnh 1 */}
+                <div className="border border-[#ded8d3] bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#1a1e29] text-sm">
+                      A. Chạy 1 ván đơn giản giữa bot của bạn và bot ngẫu nhiên
+                    </span>
+                    <button
+                      onClick={() => copyCode("python runner.py sample_agents/starter_agent.py", 101)}
+                      className="border border-[#ded8d3] px-2.5 py-0.5 text-xs text-[#253B80] hover:bg-stone-50"
+                    >
+                      {copiedIndex === 101 ? "✓ Đã chép" : "Sao chép"}
+                    </button>
+                  </div>
+                  <pre className="mt-2 overflow-x-auto bg-stone-900 p-2.5 font-mono text-xs text-stone-100">
+                    python runner.py sample_agents/starter_agent.py
+                  </pre>
+                </div>
+
+                {/* Lệnh 2 */}
+                <div className="border border-[#ded8d3] bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#1a1e29] text-sm">
+                      B. Xem bàn cờ trực quan sinh động từng nước đi (--render --delay)
+                    </span>
+                    <button
+                      onClick={() => copyCode("python runner.py sample_agents/starter_agent.py sample_agents/greedy_agent.py --render --delay 0.2", 102)}
+                      className="border border-[#ded8d3] px-2.5 py-0.5 text-xs text-[#253B80] hover:bg-stone-50"
+                    >
+                      {copiedIndex === 102 ? "✓ Đã chép" : "Sao chép"}
+                    </button>
+                  </div>
+                  <pre className="mt-2 overflow-x-auto bg-stone-900 p-2.5 font-mono text-xs text-stone-100">
+                    python runner.py sample_agents/starter_agent.py sample_agents/greedy_agent.py --render --delay 0.2
+                  </pre>
+                  <p className="mt-1.5 text-xs text-slate-500">
+                    Bàn cờ ASCII/Unicode sẽ được cập nhật liên tục với màu quân P1 (Xanh), P2 (Đỏ) và căn cứ đích.
+                  </p>
+                </div>
+
+                {/* Lệnh 3 */}
+                <div className="border border-[#ded8d3] bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#1a1e29] text-sm">
+                      C. Tự chơi bằng tay với bot của bạn (Chế độ Human)
+                    </span>
+                    <button
+                      onClick={() => copyCode("python runner.py human sample_agents/greedy_agent.py --render", 103)}
+                      className="border border-[#ded8d3] px-2.5 py-0.5 text-xs text-[#253B80] hover:bg-stone-50"
+                    >
+                      {copiedIndex === 103 ? "✓ Đã chép" : "Sao chép"}
+                    </button>
+                  </div>
+                  <pre className="mt-2 overflow-x-auto bg-stone-900 p-2.5 font-mono text-xs text-stone-100">
+                    python runner.py human sample_agents/greedy_agent.py --render
+                  </pre>
+                  <p className="mt-1.5 text-xs text-slate-500">
+                    Khi tới lượt, bạn chỉ cần gõ nước đi dạng <code className="bg-stone-100 px-1 font-mono">c5 d6</code> hoặc số thứ tự gợi ý trên màn hình.
+                  </p>
+                </div>
+
+                {/* Lệnh 4 */}
+                <div className="border border-[#ded8d3] bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#1a1e29] text-sm">
+                      D. Kiểm thử hàng loạt 50 ván có luân phiên đổi bên (--rounds --switch-sides)
+                    </span>
+                    <button
+                      onClick={() => copyCode("python runner.py my_agent.py sample_agents/greedy_agent.py --rounds 50 --switch-sides --quiet", 104)}
+                      className="border border-[#ded8d3] px-2.5 py-0.5 text-xs text-[#253B80] hover:bg-stone-50"
+                    >
+                      {copiedIndex === 104 ? "✓ Đã chép" : "Sao chép"}
+                    </button>
+                  </div>
+                  <pre className="mt-2 overflow-x-auto bg-stone-900 p-2.5 font-mono text-xs text-stone-100">
+                    python runner.py my_agent.py sample_agents/greedy_agent.py --rounds 50 --switch-sides --quiet
+                  </pre>
+                  <p className="mt-1.5 text-xs text-slate-500">
+                    Tự động thống kê số ván Thắng / Thua / Hòa và Tỷ lệ thắng (Winrate) của bot bạn.
+                  </p>
+                </div>
+
+                {/* Lệnh 5 */}
+                <div className="border border-[#ded8d3] bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#1a1e29] text-sm">
+                      E. Xuất bản ghi trận đấu ra file JSON (--save-replay)
+                    </span>
+                    <button
+                      onClick={() => copyCode("python runner.py my_agent.py sample_agents/greedy_agent.py --save-replay match_replay.json", 105)}
+                      className="border border-[#ded8d3] px-2.5 py-0.5 text-xs text-[#253B80] hover:bg-stone-50"
+                    >
+                      {copiedIndex === 105 ? "✓ Đã chép" : "Sao chép"}
+                    </button>
+                  </div>
+                  <pre className="mt-2 overflow-x-auto bg-stone-900 p-2.5 font-mono text-xs text-stone-100">
+                    python runner.py my_agent.py sample_agents/greedy_agent.py --save-replay match_replay.json
+                  </pre>
+                  <p className="mt-1.5 text-xs text-slate-500">
+                    Lưu lại toàn bộ lịch sử các bước đi để phân tích chiến thuật hoặc trực quan hóa sau này.
                   </p>
                 </div>
               </div>
