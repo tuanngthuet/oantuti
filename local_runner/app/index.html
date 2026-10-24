@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oẳn tù tì · Thử agent local</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#1a1e29;background:#f5f0ed}*{box-sizing:border-box}body{margin:0}main{max-width:1200px;margin:auto;padding:24px}header,.actions,.controls,.stats{display:flex;align-items:center;gap:10px;flex-wrap:wrap}header{justify-content:space-between}h1{font-size:25px;margin:0 0 6px}h2{font-size:18px;margin:0 0 12px}p{line-height:1.6;margin:8px 0}.muted{color:#625d59;font-size:14px}button,select,.button{font:inherit;border:1px solid #c9bfb8;background:white;color:inherit;padding:9px 13px;border-radius:5px;cursor:pointer;text-decoration:none}button:hover,.button:hover{border-color:#253b80}button:disabled{opacity:.45;cursor:default}.primary{background:#253b80;color:white}.danger{color:#a51f29}.card{background:white;border:1px solid #ded8d3;border-radius:8px;padding:18px;margin-top:18px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}.stats>div{flex:1;padding:12px;border:1px solid #ded8d3;border-left:5px solid #253b80}.stats>div+div{border-left-color:#b91c1c}.board{display:grid;grid-template-columns:24px repeat(9,1fr);max-width:610px;margin:18px auto;user-select:none}.cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #e4ddd8;position:relative}.cell.dark{background:#ece7e2}.cell.last{background:#d4def5}.cell.base:after{content:'⌂';position:absolute;bottom:0;right:2px;font-size:12px;color:#776d64}.axis{display:flex;align-items:center;justify-content:center;font:12px monospace;color:#746b64}.piece{display:flex;flex-direction:column;align-items:center;justify-content:center;width:86%;height:86%;background:#253b80;color:#ffe066;border:2px solid #1d2e66;border-radius:2px;font-weight:700;font-size:clamp(14px,2.7vw,26px);line-height:1.1}.piece.p2{background:#b91c1c;border-color:#991b1b}.piece small{font-size:clamp(7px,1vw,10px)}input[type=range]{width:100%;accent-color:#253b80;margin:16px 0}.controls{justify-content:center}.moves{max-height:470px;overflow:auto;display:grid;gap:4px}.moves button{text-align:left;font:13px monospace}.moves .selected{background:#e6ecfa;border-color:#253b80}.error{border:2px solid #ba293b;background:#fff5f5}.error h2{color:#a51f29}.notice{padding:12px;background:#fff4d6;border-radius:5px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f1ef;padding:12px;border-radius:5px;font-size:13px}details{margin-top:12px}summary{cursor:pointer;font-weight:600}.badge{font-size:13px;padding:4px 8px;background:#e6ecfa;border-radius:5px}#result{font-weight:bold;font-size:17px}#message:empty{display:none}[hidden]{display:none!important}body.presentation main{max-width:1500px}body.presentation .layout{grid-template-columns:1fr}body.presentation aside{display:none}@media(max-width:800px){main{padding:12px}.layout{grid-template-columns:1fr}.moves{max-height:180px}.piece{font-size:clamp(15px,4.5vw,26px)}}
+</style>
+<main>
+<header><div><h1>Thử agent của bạn</h1><span class="muted">Chạy trên máy bạn · Không cần Internet · Đối thủ Greedy cố định</span></div><div class="actions"><a id="guide" class="button" href="/guide" target="_blank">Bắt đầu từ số 0</a><button id="fullscreen">Toàn màn hình</button><button id="quit" class="danger">Thoát công cụ</button></div></header>
+<section class="card" id="launch"><h2>1. Sửa file → 2. Lưu → 3. Chạy thử</h2><p>Chỉ sửa <strong>my_agent.py</strong> ở cạnh thư mục <strong>app</strong>. Nhấn <strong>Ctrl+S</strong> trong trình soạn thảo, rồi bấm nút bên dưới. Bạn là P1 (xanh), đi trước; Greedy là P2 (đỏ).</p><div class="actions"><button class="primary" id="start">Chạy thử với Greedy</button><button id="stop" disabled>Dừng trận</button><span class="badge" id="status" aria-live="polite">Chưa chạy</span></div><p class="muted">Mỗi lượt tối đa 12 giây · Trận tối đa 200 nước · Chỉ chạy code bạn tin cậy; môi trường local không có sandbox.</p></section>
+<p id="message" role="alert" class="notice"></p>
+<section class="card error" id="error" role="alert" hidden><h2 id="error-title"></h2><p id="error-message"></p><p id="error-hint"></p><pre id="snippet" hidden></pre><div class="actions"><button id="error-step">Đến thời điểm lỗi</button><button id="copy-error">Sao chép chi tiết lỗi</button></div><details><summary>Chi tiết kỹ thuật, nước trả về và traceback</summary><pre id="error-detail"></pre></details></section>
+<div class="layout"><section class="card"><div class="stats"><div><strong>P1 · my_agent.py</strong><p id="p1" class="muted"></p></div><div><strong>P2 · Greedy</strong><p id="p2" class="muted"></p></div></div><p id="result" aria-live="polite"></p><div id="board" class="board" aria-label="Bàn cờ 9 nhân 9"></div><div class="actions"><strong id="position">Nước 0/0</strong><span id="live" class="badge">Theo dõi trực tiếp</span><span id="waiting" class="muted"></span></div><input id="slider" type="range" min="0" max="0" value="0" aria-label="Tua nước đi"><div class="controls"><button id="first">|◀ Đầu</button><button id="prev">◀ Trước</button><button id="play">Phát</button><button id="next">Sau ▶</button><button id="follow" class="primary">Về hiện tại</button><label>Tốc độ <select id="speed"><option value="2400">2,4s/nước</option><option value="1200" selected>1,2s/nước</option><option value="600">0,6s/nước</option><option value="300">0,3s/nước</option></select></label></div><p class="muted">Tạm dừng xem và tua không dừng trận. Bấm “Về hiện tại” để theo nước mới.</p></section>
+<aside class="card"><h2>Lịch sử nước đi</h2><div id="moves" class="moves"></div><details><summary>Log tại nước đang xem</summary><pre id="logs">Chưa có log.</pre></details><div class="actions" style="margin-top:18px"><a id="html-download" class="button" href="/download/replay">Tải replay HTML</a><a id="json-download" class="button" href="/download/json">Tải JSON</a></div><p id="saved" class="muted"></p></aside></div>
+</main>
+<script>
+'use strict';
+const REPLAY=/*REPLAY_DATA*/null;
+const TOKEN=/*LOCAL_TOKEN*/null;
+const $=id=>document.getElementById(id);
+let data=REPLAY, step=0, following=!REPLAY, playing=false, lastTick=0, stopped=false, closed=false, polling=false, states=[];
+let renderedId=null, renderedLength=-1, movesId=null, movesLength=-1;
+const emoji={ROCK:'✊',PAPER:'✋',SCISSORS:'✌️'},labels={ROCK:'ĐẤM',PAPER:'LÁ',SCISSORS:'KÉO'};
+function text(id,value){$(id).textContent=value||'';}
+function message(value){text('message',value);}
+async function action(name){
+ try{
+  const response=await fetch('/api/'+name,{method:'POST',headers:{'X-Local-Token':TOKEN}});
+  const result=await response.json(); if(!response.ok)throw Error(result.error||'Không thực hiện được thao tác.');
+  message('');
+  if(name==='start'){following=true;playing=false;await poll();}
+  if(name==='quit'){closed=true;render();message('Đã thoát công cụ. Bạn có thể đóng tab này. Chạy lại Chay.cmd (Windows) hoặc bash app/Chay.sh (Linux).');}
+ }catch(error){message(error.message+' Nếu cửa sổ chạy đã đóng, hãy chạy lại Chay.cmd (Windows) hoặc bash app/Chay.sh (Linux).');}
+}
+function seek(value){following=false;playing=false;step=Math.max(0,Math.min(Number(value),data?.moves.length||0));render();}
+function rebuild(){
+ if(!data)return;
+ if(renderedId===data.id&&renderedLength===data.moves.length)return;
+ states=[data.initial_board.flat().map(p=>p?{...p}:null)];
+ for(const move of data.moves){const board=states[states.length-1].slice();const from=move.from_row*9+move.from_col,to=move.to_row*9+move.to_col;board[to]=board[from];board[from]=null;states.push(board);}
+ renderedId=data.id;renderedLength=data.moves.length;
+}
+function render(){
+ if(!data)return;rebuild();const total=data.moves.length;
+ step=following?total:Math.min(step,total);
+ const board=states[step],last=data.moves[step-1];
+ const counts={1:{ROCK:0,PAPER:0,SCISSORS:0},2:{ROCK:0,PAPER:0,SCISSORS:0}};
+ const grid=$('board');grid.replaceChildren();
+ for(let row=8;row>=0;row--){
+  const axis=document.createElement('div');axis.className='axis';axis.textContent=row+1;grid.append(axis);
+  for(let col=0;col<9;col++){
+   const cell=document.createElement('div');cell.className='cell'+((row+col)%2?' dark':'');
+   if((row===0&&col===0)||(row===8&&col===8))cell.classList.add('base');
+   if(last&&((last.from_row===row&&last.from_col===col)||(last.to_row===row&&last.to_col===col)))cell.classList.add('last');
+   const piece=board[row*9+col];cell.title=String.fromCharCode(97+col)+(row+1);
+   if(piece){counts[piece.player][piece.type]++;const token=document.createElement('div');token.className='piece p'+piece.player;token.textContent=emoji[piece.type];const small=document.createElement('small');small.textContent=labels[piece.type];token.append(small);cell.append(token);cell.title+=' · P'+piece.player+' '+piece.type;}
+   grid.append(cell);
+  }
+ }
+ grid.append(document.createElement('div'));for(const col of 'abcdefghi'){const axis=document.createElement('div');axis.className='axis';axis.textContent=col;grid.append(axis);}
+ for(const p of [1,2])text('p'+p,`✊ ${counts[p].ROCK}/3   ✋ ${counts[p].PAPER}/4   ✌️ ${counts[p].SCISSORS}/3`);
+ const running=data.status==='running';
+ text('status',({idle:'Chưa chạy',running:'Đang chạy',finished:'Đã kết thúc',error:'Có lỗi cần xem',cancelled:'Đã dừng',snapshot:'Bản chụp lịch sử'})[data.status]);
+ $('start').disabled=running||closed; $('stop').disabled=!running||closed;
+ text('start',data.id?'Chạy lại với Greedy':'Chạy thử với Greedy');
+ text('position',`Đang xem nước ${step}/${total}`);
+ text('live',following?'● Theo dõi trực tiếp':playing?'Đang phát lịch sử':'Đang xem lịch sử');
+ text('waiting',running?`P${data.current_player} đang tính · ${Math.max(0,(Date.now()/1000-data.turn_started)).toFixed(1)}s`:'');
+ text('result',step===total&&!running?(data.winner?`P${data.winner} thắng · `:'')+(data.reason||''):running?'Trận đang chạy; bạn có thể tua xem các nước đã có.':'');
+ $('slider').max=total;$('slider').value=step;
+ text('play',playing?'Tạm dừng xem':'Phát');
+ $('first').disabled=$('prev').disabled=step===0;$('next').disabled=step===total;
+ const list=$('moves');
+ if(movesId!==data.id||movesLength!==total){
+  list.replaceChildren();
+  for(let i=0;i<total;i++){const move=data.moves[i],button=document.createElement('button');button.textContent=`${i+1}. P${move.player} ${String.fromCharCode(97+move.from_col)}${move.from_row+1} → ${String.fromCharCode(97+move.to_col)}${move.to_row+1}${move.captured_type?' ×':''}`;button.onclick=()=>seek(i+1);list.append(button);}
+  movesId=data.id;movesLength=total;
+ }
+ [...list.children].forEach((button,i)=>button.classList.toggle('selected',i+1===step));
+ if(following&&list.lastElementChild)list.scrollTop=list.scrollHeight;
+ const log=(data.logs||[])[step-1];text('logs',log?`Nước ${log.turn} · P${log.player}\nstdout:\n${log.stdout||'(trống)'}\nstderr:\n${log.stderr||'(trống)'}`:'Chưa có log tại vị trí này.');
+ $('error').hidden=!data.error;
+ if(data.error){const e=data.error;text('error-title',`${e.file}${e.line?' · dòng '+e.line:''} · lượt ${e.turn} · ${e.kind}`);text('error-message',e.message);text('error-hint',e.hint);text('snippet',e.snippet);$('snippet').hidden=!e.snippet;text('error-detail',JSON.stringify(e,null,2));}
+ text('saved',data.save_error|| (data.saved?'Đã lưu: '+data.saved:''));
+ if(data.save_error)message(data.save_error);
+}
+async function poll(){
+ if(REPLAY||closed||polling)return;polling=true;
+ try{const response=await fetch('/api/state',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const next=await response.json();if(closed)return;if(data?.id!==next.id){step=0;following=true;playing=false;}data=next;if(stopped){message('Đã kết nối lại.');stopped=false;}render();}
+ catch(error){if(!closed){stopped=true;message('Mất kết nối với công cụ local. Giữ cửa sổ chạy mở; nếu đã đóng, chạy lại Chay.cmd (Windows) hoặc bash app/Chay.sh (Linux). Chi tiết: '+error.message);}}
+ finally{polling=false;}
+}
+$('start').onclick=()=>action('start');$('stop').onclick=()=>action('stop');$('quit').onclick=()=>action('quit');
+$('slider').oninput=e=>seek(e.target.value);$('first').onclick=()=>seek(0);$('prev').onclick=()=>seek(step-1);$('next').onclick=()=>seek(step+1);
+$('follow').onclick=()=>{following=true;playing=false;render();};
+$('play').onclick=()=>{following=false;if(!playing&&step===(data?.moves.length||0)&&data?.status!=='running')step=0;playing=!playing;lastTick=Date.now();render();};
+$('error-step').onclick=()=>seek(data.moves.length);
+$('copy-error').onclick=async()=>{try{await navigator.clipboard.writeText($('error-detail').textContent);message('Đã sao chép chi tiết lỗi.');}catch{message('Không sao chép tự động được. Mở Chi tiết kỹ thuật và chọn văn bản để sao chép.');}};
+$('fullscreen').onclick=async()=>{document.body.classList.toggle('presentation');try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{message('Đã mở bố cục trình chiếu. Trình duyệt không cho bật toàn màn hình tự động.');}};
+if(REPLAY){for(const id of ['launch','quit','guide','html-download','json-download'])$(id).hidden=true;render();}else{poll();setInterval(poll,250);}
+setInterval(()=>{if(playing&&data&&Date.now()-lastTick>=Number($('speed').value)){lastTick=Date.now();if(step<data.moves.length)step++;else if(data.status!=='running')playing=false;render();}},50);
+</script></html>

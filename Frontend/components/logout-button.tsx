@@ -5,21 +5,27 @@ import { useRouter } from "next/navigation";
 
 export default function LogoutButton({ className }: { className?: string }) {
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   async function logout() {
     setBusy(true);
+    setError('');
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      router.push("/login");
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error('logout failed');
+      window.dispatchEvent(new Event('arena:auth-changed'));
+      router.replace("/dashboard");
       router.refresh();
+    } catch {
+      setError('Không thể đăng xuất. Vui lòng thử lại.');
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <button
+    <span className="inline-flex flex-col items-end gap-1"><button
       onClick={logout}
       disabled={busy}
       className={
@@ -38,5 +44,6 @@ export default function LogoutButton({ className }: { className?: string }) {
       </svg>
       <span>{busy ? "Đang xử lý..." : "Đăng xuất"}</span>
     </button>
+    {error && <span role="alert" className="max-w-56 text-xs text-rose-700">{error}</span>}</span>
   );
 }

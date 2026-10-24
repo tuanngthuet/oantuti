@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    "public real-Neon standings and private source protection",
+    "leaderboard per user, multi-agent menu and archived history",
+    "split Game History reuses original board and switches real replays",
+    "calibration and search preserve global rank",
+    "mobile history, public agent detail and legacy replay links"
+  ],
+  "schema": "ott_lb_e2e_1792456475018_83c242",
+  "cleanedUp": true
+}

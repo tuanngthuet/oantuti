@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "public preview, admin snapshot UI, rules lock and seeded round",
+    "standalone SQL runner commits live moves; private/public boundaries and playback pacing",
+    "any execution error requires admin, offline bundle run, trusted import and official confirmation",
+    "regular ratings, counters and source remain unchanged"
+  ],
+  "source": "ott_finals_e2e_1792470276743_fdd0cc",
+  "finals": "finals_e2e_1792470276743_fdd0cc",
+  "cleanedUp": true,
+  "cleanupErrors": [],
+  "judge0": "isolated deterministic stub; no real Judge0 jobs"
+}

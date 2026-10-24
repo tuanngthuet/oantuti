@@ -44,7 +44,7 @@ export default function BackendOfflineBanner({
       <div className="flex-1">
         <p className="font-semibold text-amber-800">Máy chủ cá nhân đang offline</p>
         <p className="mt-0.5 text-amber-700">
-          Tính năng này cần máy chủ cá nhân đang chạy (FastAPI + Judge0).
+          Tính năng này cần backend FastAPI và worker Python đang chạy.
           Các tính năng khác như đăng nhập, nộp agent, bảng xếp hạng và replay vẫn hoạt động bình thường.
         </p>
       </div>

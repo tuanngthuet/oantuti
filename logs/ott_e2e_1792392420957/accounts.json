@@ -1,0 +1,14 @@
+[
+  {
+    "username": "e2e_1792392425987_one",
+    "password": "Test-311576f9-9b2a-43e2-b42e-d3cf1a0bce34"
+  },
+  {
+    "username": "e2e_1792392425987_two",
+    "password": "Test-223095f5-1e56-4c44-b344-5a655eced338"
+  },
+  {
+    "username": "e2e_1792392425987_bad",
+    "password": "Test-6cf97d5b-2696-4020-bb1d-2d440d268f44"
+  }
+]

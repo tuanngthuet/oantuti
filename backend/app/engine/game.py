@@ -358,6 +358,11 @@ class OTTGameEngine:
         if state.game_over:
             return {"success": False, "error": "Trận đấu đã kết thúc."}
 
+        if any(type(value) is not int or not 0 <= value < 9 for value in (
+            move.from_col, move.from_row, move.to_col, move.to_row
+        )):
+            return {"success": False, "error": "Tọa độ nước đi phải là số nguyên từ 0 đến 8."}
+
         piece = state.board[move.from_row][move.from_col]
 
         if not piece:

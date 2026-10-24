@@ -25,7 +25,8 @@ export async function GET(request: Request) {
           SELECT
             a.id, a.agent_name, a.description, a.code, a.version,
             a.status, a.validation_error, a.is_active,
-            a.wins, a.losses, a.draws, a.error_matches, a.elo,
+            a.wins, a.losses, a.draws, a.error_matches, a.rating AS elo,
+            a.trueskill_mu, a.trueskill_sigma,
             a.submitted_at, a.user_id,
             u.username
           FROM arena_agents a
@@ -38,7 +39,8 @@ export async function GET(request: Request) {
           SELECT
             a.id, a.agent_name, a.description, a.code, a.version,
             a.status, a.validation_error, a.is_active,
-            a.wins, a.losses, a.draws, a.error_matches, a.elo,
+            a.wins, a.losses, a.draws, a.error_matches, a.rating AS elo,
+            a.trueskill_mu, a.trueskill_sigma,
             a.submitted_at, a.user_id,
             u.username
           FROM arena_agents a

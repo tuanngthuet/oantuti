@@ -1,0 +1,198 @@
+{
+  "runId": "ck_season_1792574598432_346bd8",
+  "source": "ott_ck_season_1792574598432_346bd8",
+  "finals": "finals_ck_season_1792574598432_346bd8",
+  "port": 3305,
+  "url": "http://127.0.0.1:3305",
+  "logDir": "/home/tuan/Oantuti/logs/ck_season_1792574598432_346bd8",
+  "startedAt": "2026-10-21T09:23:18.432Z",
+  "containers": [
+    {
+      "name": "ck_season_1792574598432_346bd8-round_16",
+      "round": 1,
+      "image": "oantuti-ck-round_16:season-1792574598432_346bd8"
+    },
+    {
+      "name": "ck_season_1792574598432_346bd8-quarterfinal",
+      "round": 2,
+      "image": "oantuti-ck-quarterfinal:season-1792574598432_346bd8"
+    },
+    {
+      "name": "ck_season_1792574598432_346bd8-semifinal",
+      "round": 3,
+      "image": "oantuti-ck-semifinal:season-1792574598432_346bd8"
+    },
+    {
+      "name": "ck_season_1792574598432_346bd8-final",
+      "round": 4,
+      "image": "oantuti-ck-final:season-1792574598432_346bd8"
+    },
+    {
+      "name": "ck_season_1792574598432_346bd8-third_place",
+      "round": 5,
+      "image": "oantuti-ck-third_place:season-1792574598432_346bd8"
+    }
+  ],
+  "processes": [
+    {
+      "name": "frontend",
+      "pid": 1400056
+    }
+  ],
+  "buildDir": ".next-ck-test",
+  "route": {
+    "host": "api.c-4.ap-southeast-1.aws.neon.tech",
+    "address": "3.0.27.201"
+  },
+  "productionBefore": {
+    "public": {
+      "users": {
+        "count": 42,
+        "digest": "8ef31affc5d0785d51a08d05c4e2351a"
+      },
+      "arena_agents": {
+        "count": 97,
+        "digest": "f0a33c85805eb4e0ad57f1b089e2938d"
+      },
+      "rated_matches": {
+        "count": 558,
+        "digest": "8dd990768faa6dd29b8bae001888df8f"
+      },
+      "friendly_matches": {
+        "count": 2,
+        "digest": "224ab8435345f799fee24ef86af730c4"
+      },
+      "rated_match_move_history": {
+        "count": 29175,
+        "digest": "349be07b00bb1d82525fa971fe63b093"
+      }
+    },
+    "finals": {
+      "editions": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "entrants": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "pairs": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "games": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "attempts": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "moves": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "audit": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      }
+    }
+  },
+  "sourceBefore": {
+    "arena_agents": {
+      "count": 17,
+      "digest": "5f2c5b9aea9dda6d66bf8c2100ea06e8"
+    },
+    "rated_matches": {
+      "count": 160,
+      "digest": "81c21bc97053c4264ee9aa54980a4efe"
+    },
+    "friendly_matches": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+  },
+  "editionId": "1",
+  "completedRound": 5,
+  "replayVerification": {
+    "replays_verified": 32,
+    "legal_moves_verified": 348,
+    "outcomes": {
+      "agent1": 20,
+      "agent2": 8,
+      "draw": 4
+    }
+  },
+  "productionAfter": {
+    "public": {
+      "users": {
+        "count": 42,
+        "digest": "8ef31affc5d0785d51a08d05c4e2351a"
+      },
+      "arena_agents": {
+        "count": 97,
+        "digest": "f0a33c85805eb4e0ad57f1b089e2938d"
+      },
+      "rated_matches": {
+        "count": 558,
+        "digest": "8dd990768faa6dd29b8bae001888df8f"
+      },
+      "friendly_matches": {
+        "count": 2,
+        "digest": "224ab8435345f799fee24ef86af730c4"
+      },
+      "rated_match_move_history": {
+        "count": 29175,
+        "digest": "349be07b00bb1d82525fa971fe63b093"
+      }
+    },
+    "finals": {
+      "editions": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "entrants": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "pairs": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "games": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "attempts": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "moves": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "audit": {
+        "count": 0,
+        "digest": "d41d8cd98f00b204e9800998ecf8427e"
+      }
+    }
+  },
+  "sourceAfter": {
+    "arena_agents": {
+      "count": 17,
+      "digest": "5f2c5b9aea9dda6d66bf8c2100ea06e8"
+    },
+    "rated_matches": {
+      "count": 160,
+      "digest": "81c21bc97053c4264ee9aa54980a4efe"
+    },
+    "friendly_matches": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+  },
+  "passed": true,
+  "completedAt": "2026-10-21T09:29:02.885Z",
+  "stopped": true,
+  "stoppedAt": "2026-10-21T09:57:58.099547+00:00"
+}

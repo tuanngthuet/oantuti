@@ -1,0 +1,37 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/tuan/Oantuti/finals_runner/__main__.py", line 130, in <module>
+    main()
+  File "/home/tuan/Oantuti/finals_runner/__main__.py", line 126, in main
+    asyncio.run(offline(args) if args.bundle else online(args))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/tuan/Oantuti/finals_runner/__main__.py", line 92, in online
+    await asyncio.to_thread(db.heartbeat, args.concurrency)
+  File "/usr/lib/python3.10/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/tuan/Oantuti/finals_runner/db.py", line 50, in heartbeat
+    rows = self.query("""INSERT INTO workers(id,instance_id,concurrency) VALUES(%s,%s,%s)
+  File "/home/tuan/Oantuti/finals_runner/db.py", line 28, in query
+    self._connection = psycopg.connect(self.url, row_factory=dict_row, connect_timeout=5,
+  File "/tmp/oantuti-worker-tests/lib/python3.10/site-packages/psycopg/connection.py", line 134, in connect
+    raise new_ex.with_traceback(None)
+psycopg.OperationalError: connection is bad: connection to server at "2406:da18:17a4:5428:fd4b:954e:1f8f:ea73", port 5432 failed: Network is unreachable
+	Is the server running on that host and accepting TCP/IP connections?
+Multiple connection attempts failed. All failures were:
+- host: 'ep-noisy-flower-b3637z5u-pooler.c-4.ap-southeast-1.aws.neon.tech', port: None, hostaddr: '52.76.246.190': connection timeout expired
+- host: 'ep-noisy-flower-b3637z5u-pooler.c-4.ap-southeast-1.aws.neon.tech', port: None, hostaddr: '52.76.212.156': connection timeout expired
+- host: 'ep-noisy-flower-b3637z5u-pooler.c-4.ap-southeast-1.aws.neon.tech', port: None, hostaddr: '3.0.27.201': connection timeout expired
+- host: 'ep-noisy-flower-b3637z5u-pooler.c-4.ap-southeast-1.aws.neon.tech', port: None, hostaddr: '2406:da18:17a4:541b:42aa:d77c:26be:6f94': connection is bad: connection to server at "2406:da18:17a4:541b:42aa:d77c:26be:6f94", port 5432 failed: Network is unreachable
+	Is the server running on that host and accepting TCP/IP connections?
+- host: 'ep-noisy-flower-b3637z5u-pooler.c-4.ap-southeast-1.aws.neon.tech', port: None, hostaddr: '2406:da18:17a4:5406:2d1c:a30f:9729:e12d': connection is bad: connection to server at "2406:da18:17a4:5406:2d1c:a30f:9729:e12d", port 5432 failed: Network is unreachable
+	Is the server running on that host and accepting TCP/IP connections?
+- host: 'ep-noisy-flower-b3637z5u-pooler.c-4.ap-southeast-1.aws.neon.tech', port: None, hostaddr: '2406:da18:17a4:5428:fd4b:954e:1f8f:ea73': connection is bad: connection to server at "2406:da18:17a4:5428:fd4b:954e:1f8f:ea73", port 5432 failed: Network is unreachable
+	Is the server running on that host and accepting TCP/IP connections?

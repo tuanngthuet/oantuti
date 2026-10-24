@@ -1,0 +1,9 @@
+**
+!worker_ck/
+!worker_ck/__init__.py
+!worker_ck/requirements.txt
+!worker_ck/common/
+!worker_ck/common/*.py
+!worker_ck/round_16/
+!worker_ck/round_16/*.py
+!worker_ck/round_16/manifest.json

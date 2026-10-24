@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "verifiedAt": "2026-10-19T08:31:17.600Z",
+  "checks": [
+    "real Neon schema isolation",
+    "self-hosted frontend, backend, worker heartbeat and real Redis",
+    "real Judge0 self-play accepts valid agents and rejects failing code",
+    "TrueSkill snapshots and full rating replays persisted in Neon",
+    "friendly challenge, accept, enqueue, worker and complete replay",
+    "duplicate result callback does not alter real persisted ratings",
+    "authenticated frontend HTML pages and admin system status",
+    "all test jobs completed and scheduler paused"
+  ],
+  "schema": "ott_e2e_1792398353865",
+  "redisPrefix": "ott_e2e_1792398353865:",
+  "frontend": "http://127.0.0.1:3100",
+  "backend": "http://127.0.0.1:8100",
+  "neonRoute": {
+    "host": "api.c-4.ap-southeast-1.aws.neon.tech",
+    "address": "3.0.27.201"
+  },
+  "ratings": [
+    {
+      "id": "4",
+      "moves": 11
+    }
+  ],
+  "friendly": [
+    {
+      "id": "1",
+      "moves": 11
+    }
+  ],
+  "services": [
+    {
+      "name": "backend",
+      "pid": 171266,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792398353865/backend.log"
+    },
+    {
+      "name": "frontend",
+      "pid": 198420,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792398353865/frontend.log"
+    },
+    {
+      "name": "worker",
+      "pid": 171409,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792398353865/worker.log"
+    }
+  ]
+}

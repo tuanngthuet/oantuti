@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "checks": [
+    "public preview, admin snapshot UI, rules lock and seeded round"
+  ],
+  "source": "ott_finals_e2e_1792469314240_6fd2f4",
+  "finals": "finals_e2e_1792469314240_6fd2f4",
+  "cleanedUp": true,
+  "judge0": "isolated deterministic stub; no real Judge0 jobs"
+}

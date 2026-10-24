@@ -1,0 +1,25 @@
+{
+  "appliedAt": "2026-10-20T04:23:42.310Z",
+  "schema": "finals",
+  "before": [
+    {
+      "users": "10",
+      "agents": "21",
+      "rated": "100",
+      "moves": "1430",
+      "friendly": "2",
+      "digest": "6a98c64621cb76e9ed7350cb555a590f"
+    }
+  ],
+  "after": [
+    {
+      "users": "10",
+      "agents": "21",
+      "rated": "100",
+      "moves": "1430",
+      "friendly": "2",
+      "digest": "6a98c64621cb76e9ed7350cb555a590f"
+    }
+  ],
+  "preserved": true
+}

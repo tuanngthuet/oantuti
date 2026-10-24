@@ -1,0 +1,7 @@
+2026-10-20 11:09:14,481 httpx HTTP Request: POST http://127.0.0.1:45573/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:09:15,039 finals Game 1 move 1 committed
+2026-10-20 11:09:15,206 httpx HTTP Request: POST http://127.0.0.1:45573/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:09:35,702 finals Game 1 move 2 committed
+2026-10-20 11:09:35,867 httpx HTTP Request: POST http://127.0.0.1:45573/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:09:56,463 finals Game 1 move 3 committed
+2026-10-20 11:09:56,628 httpx HTTP Request: POST http://127.0.0.1:45573/submissions "HTTP/1.1 200 OK"

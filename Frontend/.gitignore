@@ -1,7 +1,12 @@
 node_modules
 .next
+.next-e2e
+.next-leaderboard-test
 out
 .env
 .env.local
 .vercel
 *.log
+.next-finals-test/
+
+.next-ck-test/

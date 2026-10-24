@@ -1,45 +1,32 @@
-import { NextResponse } from "next/server";
-import { sql } from "@/lib/db";
-import { getSession } from "@/lib/session";
-
-export const runtime = "nodejs";
-
-export async function GET() {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Chưa đăng nhập." }, { status: 401 });
-
+import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/session';
+import { buildStandings, positivePage, RANKING_MINIMUM_GAMES } from '@/lib/leaderboard';
+import { publicAgents } from '@/lib/leaderboard-data';
+import { sql } from '@/lib/db';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export async function GET(request: Request) {
+  const params = new URL(request.url).searchParams;
+  const page = positivePage(params.get('page'));
+  const tab = params.get('tab') === 'calibrating' ? 'calibrating' : 'rankings';
+  const search = (params.get('search') ?? '').slice(0, 100).trim().toLocaleLowerCase();
   try {
-    const rows = await sql`
-      SELECT
-        a.id AS agent_id,
-        a.agent_name,
-        a.description,
-        a.version,
-        a.status,
-        a.elo,
-        a.wins,
-        a.losses,
-        a.draws,
-        a.error_matches,
-        a.submitted_at,
-        u.username,
-        (a.wins + a.losses + a.draws) AS total_games,
-        CASE
-          WHEN (a.wins + a.losses + a.draws) = 0 THEN 0
-          ELSE ROUND(a.wins::numeric / (a.wins + a.losses + a.draws) * 100, 1)
-        END AS win_rate
-      FROM arena_agents a
-      JOIN users u ON u.id = a.user_id
-      WHERE a.status = 'active'
-      ORDER BY a.elo DESC, a.wins DESC, a.submitted_at ASC
-      LIMIT 100
-    `;
-    return NextResponse.json({ leaderboard: rows });
+    const [agents, session] = await Promise.all([publicAgents(), getSession()]);
+    const standings = buildStandings(agents);
+    const matchingParticipants = new Set(agents.filter(a => a.agent_name.toLocaleLowerCase().includes(search) || a.username.toLocaleLowerCase().includes(search)
+      || a.members?.some(m=>m.username.toLocaleLowerCase().includes(search))).map(a => a.team_id?`team:${a.team_id}`:`user:${a.user_id}`));
+    const ownTeam=session?(await sql`SELECT current_team(${session.id}) AS id`)[0]?.id:null;
+    const ownKey=ownTeam?`team:${ownTeam}`:`user:${session?.id}`;
+    const mine = standings.find(e => e.participant_key===ownKey);
+    const filtered = standings.filter(e => e.eligible === (tab === 'rankings'))
+      .filter(e => !search || e.username.toLocaleLowerCase().includes(search)
+        || matchingParticipants.has(e.participant_key));
+    return NextResponse.json({ leaderboard: filtered.slice((page - 1) * 20, page * 20),
+      page, limit: 20, total: filtered.length, tab, authenticated: !!session, minimum_games: RANKING_MINIMUM_GAMES,
+      me: mine ? { ...mine, page: Math.floor(standings.filter(e => e.eligible === mine.eligible).findIndex(e => e.participant_key===mine.participant_key) / 20) + 1 } : null,
+      counts: { rankings: standings.filter(e => e.eligible).length, calibrating: standings.filter(e => !e.eligible).length } });
   } catch (error) {
-    console.error("Arena leaderboard failed:", error);
-    return NextResponse.json(
-      { error: "Không thể tải bảng xếp hạng. Hãy chạy tournament_schema.sql trước." },
-      { status: 500 },
-    );
+    console.error('Leaderboard failed', error);
+    return NextResponse.json({ error: 'Không thể tải bảng xếp hạng.' }, { status: 500 });
   }
 }

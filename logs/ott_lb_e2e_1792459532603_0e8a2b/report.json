@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "checks": [
+    "public real-Neon standings and private source protection",
+    "guest dashboard and login/register links preserve the chosen feature",
+    "failed logout retains the session; successful logout returns to public dashboard",
+    "registration returns to the feature and unsafe redirect cannot leave the app",
+    "admin logout clears administrative dashboard and mobile guest dashboard remains accessible",
+    "leaderboard per user, multi-agent menu and archived history",
+    "split Game History reuses original board and switches real replays",
+    "calibration and search preserve global rank",
+    "mobile history, public agent detail and legacy replay links",
+    "team creation, invitations, current-scope ownership and admin-only dissolution in Chrome"
+  ],
+  "schema": "ott_lb_e2e_1792459532603_0e8a2b",
+  "cleanedUp": true
+}

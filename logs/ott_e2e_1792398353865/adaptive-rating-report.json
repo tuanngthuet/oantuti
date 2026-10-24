@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-19T08:31:36.630Z",
+  "checks": [
+    "real concurrent HTTP database transactions reserve disjoint agents",
+    "expired dispatch token cannot acknowledge a newer reservation",
+    "stable agents stop creating matches and refresh after 24 hours",
+    "daily budget blocks new reservations, infrastructure failures do not consume it",
+    "Chrome shows per-agent budgets, needs and scheduler control independent of rebuild"
+  ],
+  "schema": "ott_e2e_1792398353865_rating",
+  "frontend": "http://127.0.0.1:3100"
+}

@@ -1,0 +1,16 @@
+2026-10-20 11:22:58,606 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:58,609 finals Local game 9 move 1
+2026-10-20 11:22:58,773 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:58,776 finals Local game 9 move 2
+2026-10-20 11:22:58,939 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:58,943 finals Local game 9 move 3
+2026-10-20 11:22:59,106 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:59,109 finals Local game 9 move 4
+2026-10-20 11:22:59,272 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:59,275 finals Local game 9 move 5
+2026-10-20 11:22:59,439 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:59,441 finals Local game 9 move 6
+2026-10-20 11:22:59,604 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:59,606 finals Local game 9 move 7
+2026-10-20 11:22:59,772 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:59,775 finals Local game 9 move 8

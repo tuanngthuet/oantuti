@@ -1,0 +1,31 @@
+# Portable deployment: image already contains worker code and .env.
+name: oantuti-worker-portable
+services:
+  worker-python:
+    image: oantuti-worker-python:bundled
+    pull_policy: never
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 20s
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:unconfined
+      - apparmor:unconfined
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 4
+    pids_limit: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '2'
+    volumes:
+      - worker-identity:/var/lib/oantuti
+
+volumes:
+  worker-identity:

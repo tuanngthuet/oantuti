@@ -1,0 +1,5 @@
+# Private reset backups and generated test account passwords.
+/fresh-test-data-*/
+**/*.bundle.json
+**/*.record.json
+/demo-data-*/

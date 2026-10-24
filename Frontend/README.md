@@ -1,43 +1,97 @@
-# Neon Vercel Auth (demo)
+# 🌐 OTTv2 Arena — Frontend Application
 
-Website đăng ký / đăng nhập bằng Next.js, Neon PostgreSQL, bcryptjs và cookie session có chữ ký.
+Giao diện web trực tuyến của hệ thống **OTTv2 Arena**, được xây dựng trên nền tảng **Next.js 15 (App Router)**, **React 19**, **Tailwind CSS** và **Neon PostgreSQL**.
 
-## 1. Chuẩn bị Neon
-1. Tạo project tại https://console.neon.tech/
-2. Mở SQL Editor, chạy nội dung `database.sql`.
-3. Trong Neon, chọn **Connect** và sao chép connection string. Giữ `sslmode=require` nếu có.
+---
 
-## 2. Chạy trên máy Ubuntu
-Cần Node.js 20.9 trở lên và npm.
+## 📑 Mục lục
+1. [Tính năng chính](#1-tính-năng-chính)
+2. [Cấu trúc thư mục](#2-cấu-trúc-thư-mục)
+3. [Cấu hình biến môi trường](#3-cấu-hình-biến-môi-trường)
+4. [Hướng dẫn cài đặt & Khởi chạy](#4-hướng-dẫn-cài-đặt--khởi-chạy)
+5. [Cơ sở dữ liệu & Migration](#5-cơ-sở-dữ-liệu--migration)
 
+---
+
+## 1. Tính năng chính
+* **Xác thực người dùng:** Đăng ký, đăng nhập bảo mật với Bcrypt và Session Token lưu trong `HttpOnly Cookie`.
+* **Trình soạn thảo Agent (IDE):** Tích hợp **CodeMirror** (One Dark theme, highlight cú pháp Python, đếm ký tự đến 64KB).
+* **Kiểm tra tính hợp lệ (Validation):** Gửi code chạy thử nghiệm 60 nước đi mẫu trong Sandbox trước khi lưu chính thức.
+* **Đấu giao hữu riêng tư (`/arena/friendly`):** Ghép cặp bot cá nhân/team với bot công khai của đối thủ (tối đa 200 nước, 10 lượt/ngày, bảo mật Replay không lộ bài).
+* **Bảng xếp hạng ELO (Leaderboard):** Tự động lọc **Best Agent** (mỗi người chơi/đội chỉ lấy 1 bot có ELO cao nhất để xếp hạng).
+* **Interactive Replay Player:** Tua ván cờ, xem diễn biến từng nước đi với tốc độ tùy chỉnh (100ms – 2000ms/nước).
+* **Quản trị Vòng Chung kết (`/admin/finals`):** Chốt Top 16 hạt giống, mở nhận bài theo từng vòng, khóa bài và mở đấu.
+
+---
+
+## 2. Cấu trúc thư mục
+
+```text
+Frontend/
+├── app/                  # Next.js App Router (pages & server actions)
+│   ├── (auth)/           # Đăng nhập, đăng ký
+│   ├── admin/            # Trang quản trị (workers, finals, agent review)
+│   ├── arena/            # Đấu giao hữu & đấu test
+│   ├── finals/           # Sơ đồ và chi tiết Vòng Chung kết
+│   ├── leaderboard/      # Bảng xếp hạng ELO Best Agent
+│   └── replay/           # Trình phát lại ván đấu
+├── components/           # UI Components (Board, Replay, Editor, Bracket)
+├── lib/                  # Utilities, DB Client (Neon), Auth & ELO math
+├── scripts/              # Scripts migration DB, seed demo, E2E test
+├── public/               # Tài nguyên tĩnh (ảnh, icon quân cờ)
+└── README.md             # Tài liệu này
+```
+
+---
+
+## 3. Cấu hình biến môi trường
+
+Sao chép `.env.example` thành `.env.local`:
 ```bash
-unzip neon-vercel-auth.zip
-cd neon-vercel-auth
-npm install
 cp .env.example .env.local
 ```
 
-Sửa `.env.local`:
-- `DATABASE_URL`: connection string Neon.
-- `SESSION_SECRET`: chuỗi ngẫu nhiên dài ít nhất 32 ký tự. Có thể tạo bằng `openssl rand -base64 32`.
+Các biến môi trường quan trọng:
+* `DATABASE_URL`: Connection string kết nối cơ sở dữ liệu Neon PostgreSQL.
+* `SESSION_SECRET`: Khóa bí mật ký JWT Session (tối thiểu 32 ký tự).
+* `BACKEND_URL`: Địa chỉ Backend FastAPI (mặc định: `http://localhost:8000`).
+* `INTERNAL_BACKEND_SECRET`: Khóa xác thực nội bộ khớp với Backend.
+* `WORKER_CALLBACK_SECRET`: Khóa nhận callback kết quả từ Worker.
+* `CK_WORKER_TOKENS`: JSON chứa 5 token xác thực cho 5 vòng Chung kết.
 
-Sau đó chạy:
+---
+
+## 4. Hướng dẫn cài đặt & Khởi chạy
 
 ```bash
+# 1. Cài đặt dependencies
+npm install
+
+# 2. Khởi chạy môi trường phát triển (Development)
 npm run dev
+
+# 3. Build & Chạy Production
+npm run build
+npm start
 ```
 
-Mở http://localhost:3000
+Truy cập ứng dụng tại: `http://localhost:3000`
 
-## 3. Deploy lên Vercel
-1. Đẩy thư mục này lên GitHub (không commit `.env.local`).
-2. Vào https://vercel.com/new và import repository.
-3. Trong Project Settings → Environment Variables, thêm `DATABASE_URL` và `SESSION_SECRET` cho Production (có thể thêm Preview/Development nếu cần).
-4. Deploy hoặc redeploy sau khi thêm biến môi trường.
+---
 
-Tài liệu Vercel về biến môi trường: https://vercel.com/docs/environment-variables
+## 5. Cơ sở dữ liệu & Migration
 
-## Ghi chú bảo mật
-- Mật khẩu được hash bằng bcrypt, không lưu mật khẩu gốc.
-- Session dùng cookie `HttpOnly`, `SameSite=Lax`, và `Secure` trong production.
-- Đây là starter/demo. Trước khi dùng cho hệ thống công khai cần thêm rate limiting chống brute-force, xác minh email, quy trình quên mật khẩu, giám sát và chính sách bảo mật phù hợp.
+Để chuẩn bị dữ liệu cho hệ thống:
+```bash
+# Migration cho hệ thống Chung kết (Dry-run kiểm tra)
+node scripts/migrate-finals.mjs
+
+# Thực thi migration chính thức
+node scripts/migrate-finals.mjs --apply
+
+# Nạp dữ liệu tài khoản và bot mẫu (Test environment)
+node scripts/seed-demo-data.mjs --apply
+```
+
+---
+[⬅ Quay lại README Tổng](../README.md)

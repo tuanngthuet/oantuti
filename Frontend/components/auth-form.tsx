@@ -2,8 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { safeReturnTo } from '@/lib/auth-navigation';
 
-export default function AuthForm({ mode }: { mode: "login" | "register" }) {
+export default function AuthForm({ mode, returnTo = '/dashboard' }: { mode: "login" | "register"; returnTo?: string }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +27,8 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
         setMessage(data.error || "Có lỗi xảy ra. Vui lòng thử lại.");
         return;
       }
-      router.push("/dashboard");
+      window.dispatchEvent(new Event('arena:auth-changed'));
+      router.replace(safeReturnTo(returnTo));
       router.refresh();
     } catch {
       setMessage("Không thể kết nối máy chủ. Vui lòng thử lại.");

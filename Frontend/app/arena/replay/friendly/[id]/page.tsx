@@ -6,7 +6,7 @@ export default async function FriendlyReplayPage({ params }: { params: Promise<{
     <ReplayView
       apiUrl={`/api/friendly/${id}/replay`}
       backLink="/arena/friendly"
-      backLabel="← Đối kháng riêng"
+      backLabel="← Thách đấu riêng tư"
     />
   );
 }

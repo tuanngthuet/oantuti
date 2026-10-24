@@ -1,0 +1,508 @@
+INFO:     Started server process [63868]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-10-19 13:47:03,363 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54626 - "GET /health HTTP/1.1" 200 OK
+2026-10-19 13:47:03,626 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:03,896 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:03,899 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54632 - "POST /worker/tasks/recover?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54626 - "GET /workers/status HTTP/1.1" 200 OK
+2026-10-19 13:47:04,140 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:04,342 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:04,541 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54634 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:05,563 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37172 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:05,601 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:05,816 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:05,985 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54626 - "GET /workers/status HTTP/1.1" 200 OK
+2026-10-19 13:47:07,081 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37180 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:08,316 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37190 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:09,359 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:09,360 [INFO] app.routers.rating: Enqueued validation rating task #1
+INFO:     127.0.0.1:37206 - "POST /rating/enqueue HTTP/1.1" 200 OK
+2026-10-19 13:47:09,681 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:09,683 [INFO] app.routers.workers_queue: Machine ott_e2e_1792392420957_worker claimed task rating-1 (delivery=a8de3d3af585:1792392429)
+INFO:     127.0.0.1:37214 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:09,917 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:09,918 [INFO] app.routers.rating: Enqueued validation rating task #2
+INFO:     127.0.0.1:37206 - "POST /rating/enqueue HTTP/1.1" 200 OK
+2026-10-19 13:47:09,970 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:10,135 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:10,363 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37220 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:10,487 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:10,489 [INFO] app.routers.rating: Enqueued validation rating task #3
+INFO:     127.0.0.1:37206 - "POST /rating/enqueue HTTP/1.1" 200 OK
+2026-10-19 13:47:10,567 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:10,568 [INFO] app.routers.workers_queue: Machine ott_e2e_1792392420957_worker claimed task rating-2 (delivery=5b398e57bb00:1792392430)
+INFO:     127.0.0.1:37224 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:10,827 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:11,557 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:11,797 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37238 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:25,911 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:26,521 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:26,522 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:26,565 [INFO] app.redis_client: ACK: task rating-2 (machine=ott_e2e_1792392420957_worker, delivery=5b398e57bb00:1792392430)
+INFO:     127.0.0.1:47104 - "POST /worker/tasks/ack HTTP/1.1" 200 OK
+2026-10-19 13:47:26,971 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:26,972 [INFO] app.redis_client: ACK: task rating-1 (machine=ott_e2e_1792392420957_worker, delivery=a8de3d3af585:1792392429)
+INFO:     127.0.0.1:47110 - "POST /worker/tasks/ack HTTP/1.1" 200 OK
+2026-10-19 13:47:27,140 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:27,403 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:27,630 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47120 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:28,148 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:28,151 [INFO] app.routers.rating: Enqueued rating rating task #4
+INFO:     127.0.0.1:47124 - "POST /rating/enqueue HTTP/1.1" 200 OK
+2026-10-19 13:47:28,503 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:28,505 [INFO] app.routers.workers_queue: Machine ott_e2e_1792392420957_worker claimed task rating-3 (delivery=5edb7b08df26:1792392448)
+INFO:     127.0.0.1:47136 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:28,757 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:28,923 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:29,132 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47146 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:29,364 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:29,551 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:29,747 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47158 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:30,268 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:30,306 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:30,306 [INFO] app.routers.workers_queue: Machine ott_e2e_1792392420957_worker claimed task rating-4 (delivery=8bf9dcda6709:1792392450)
+INFO:     127.0.0.1:47184 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:30,464 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:30,464 [INFO] app.redis_client: ACK: task rating-3 (machine=ott_e2e_1792392420957_worker, delivery=5edb7b08df26:1792392448)
+INFO:     127.0.0.1:47174 - "POST /worker/tasks/ack HTTP/1.1" 200 OK
+2026-10-19 13:47:30,535 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:30,702 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:30,907 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47188 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:31,123 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:31,338 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:31,515 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47200 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:47:31,779 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47210 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:33,099 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47212 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:35,463 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47216 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:38,507 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54516 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:40,965 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54520 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:44,982 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54524 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:47,455 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:58462 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:48,253 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:49,249 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:49,250 [INFO] app.redis_client: ACK: task rating-4 (machine=ott_e2e_1792392420957_worker, delivery=8bf9dcda6709:1792392450)
+INFO:     127.0.0.1:58454 - "POST /worker/tasks/ack HTTP/1.1" 200 OK
+2026-10-19 13:47:49,732 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:58470 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:51,852 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:57,965 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:57,967 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:57,969 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59874 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58488 - "GET /health HTTP/1.1" 200 OK
+2026-10-19 13:47:59,212 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:59,214 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:59,217 [INFO] app.routers.friendly: Enqueued friendly task #1
+INFO:     127.0.0.1:58488 - "POST /friendly/enqueue HTTP/1.1" 200 OK
+2026-10-19 13:47:59,473 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:59,475 [INFO] app.routers.workers_queue: Machine ott_e2e_1792392420957_worker claimed task friendly-1 (delivery=3cda7f346ba8:1792392479)
+INFO:     127.0.0.1:59890 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:47:59,707 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:47:59,883 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:00,079 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59894 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:48:00,283 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59910 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:08,260 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:08,865 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59924 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:09,064 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:09,741 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:11,242 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59926 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:48:13,223 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:35392 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:17,259 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:41366 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:19,661 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:41368 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:21,947 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:41380 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:24,496 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:41382 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:27,245 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55840 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:30,222 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55856 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:32,492 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:33,431 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:34,318 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55862 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:48:36,264 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46174 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:38,946 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:38,948 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46190 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:39,548 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:39,674 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:39,676 [INFO] app.redis_client: ACK: task friendly-1 (machine=ott_e2e_1792392420957_worker, delivery=3cda7f346ba8:1792392479)
+INFO:     127.0.0.1:46176 - "POST /worker/tasks/ack HTTP/1.1" 200 OK
+2026-10-19 13:48:39,963 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:40,678 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:40,680 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46204 - "GET /workers/status HTTP/1.1" 200 OK
+2026-10-19 13:48:41,622 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:48:42,662 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46212 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:48:43,738 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46214 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:45,478 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43302 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:47,874 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43312 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:50,905 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43322 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:48:58,706 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43334 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:04,932 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:58032 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:06,595 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39442 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:07,829 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39454 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:09,161 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39458 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:11,328 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:49:11,673 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:49:11,675 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:49:12,531 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39472 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:49:12,642 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:49:13,842 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39496 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:13,944 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:39484 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:49:18,983 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57420 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:24,081 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57436 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:26,560 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42014 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:29,732 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42020 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:35,210 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42024 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:41,112 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48228 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:43,041 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:49:43,557 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:49:44,457 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48238 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:49:51,685 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:44296 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:49:57,992 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49460 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:01,184 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49472 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:04,857 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49482 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:07,212 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57490 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:08,973 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57500 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:11,079 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57516 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:14,459 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57530 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:15,544 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:16,147 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:16,190 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:17,259 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57534 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:50:21,589 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:21,782 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54354 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:21,798 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:23,450 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54358 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:23,503 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54372 - "GET /health HTTP/1.1" 200 OK
+2026-10-19 13:50:23,735 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:23,954 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:24,130 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54376 - "GET /workers/status HTTP/1.1" 200 OK
+2026-10-19 13:50:24,692 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37212 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:25,139 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:25,346 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:25,568 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37214 - "GET /workers/status HTTP/1.1" 200 OK
+2026-10-19 13:50:26,014 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37216 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:27,330 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37222 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:34,095 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37234 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:36,183 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42154 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:39,462 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42170 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:41,799 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42180 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:44,381 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42184 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:45,755 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53938 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:46,996 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:47,431 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:50:48,167 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53944 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:50:49,480 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53958 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:50:54,209 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53964 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:01,227 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56426 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:05,095 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56436 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:12,536 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54608 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:14,892 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48030 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:18,186 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48046 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:23,243 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:23,245 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:24,426 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:24,470 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:25,035 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:25,036 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48060 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:51:25,673 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60480 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:27,995 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60484 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:30,438 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60494 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:33,227 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60504 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:37,260 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53140 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:44,679 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53144 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:48,992 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47658 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:51,211 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:52,165 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:51:52,683 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47672 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:51:53,517 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:47688 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:54,828 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37246 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:51:57,228 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37250 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:00,151 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37254 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:06,073 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37268 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:09,376 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56180 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:11,704 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56196 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:14,710 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56212 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:18,794 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51546 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:21,527 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51560 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:24,320 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:52:25,179 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:52:25,752 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:52:25,869 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51562 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:52:27,167 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:52:28,412 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:52:28,414 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:45206 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45190 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:52:30,666 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:45220 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:36,125 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:45228 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:41,638 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46482 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:45,229 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46488 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:48,724 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:33530 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:51,244 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:33532 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:53,791 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:33546 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:52:55,558 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:52:56,678 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:00,771 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:01,228 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37302 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:03,057 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37308 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:07,245 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:37322 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:12,546 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:57260 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:15,521 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60716 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:18,389 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60730 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:21,259 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60736 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:25,230 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:60746 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:32,191 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:32,498 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:37,798 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:37,801 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:33004 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:37,847 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:38,355 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:38,357 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:32988 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:53:40,811 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51110 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:43,276 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51126 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:46,135 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59034 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:55,244 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:59038 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:53:57,484 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:53:59,055 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:54:00,269 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43248 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:54:04,466 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:43254 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:14,483 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:48332 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:17,862 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38364 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:20,146 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38376 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:21,679 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38392 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:25,149 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38400 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:28,120 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:40010 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:29,401 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:54:29,612 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:54:29,775 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:40018 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:54:30,137 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:40024 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:32,915 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:40038 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:36,704 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46766 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:40,390 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46776 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:40,510 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:54:41,728 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:54:42,463 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:54:42,464 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46790 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46786 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:54:45,613 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:46806 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:47,539 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52530 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:49,625 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52542 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:53,027 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52546 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:56,672 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55872 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:54:59,642 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55880 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:06,782 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:07,228 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42664 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:07,444 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:08,265 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:09,298 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42680 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:12,453 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:42686 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:15,797 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50318 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:17,291 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50334 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:18,530 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50346 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:19,844 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50348 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:21,077 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50356 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:23,652 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50366 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:28,251 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54578 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:31,243 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54580 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:33,661 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:35,277 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:36,825 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54594 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:55:40,602 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:34408 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:43,879 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:45,261 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:55:45,264 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:34410 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:46,149 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:34414 - "POST /worker/tasks/reap HTTP/1.1" 200 OK
+2026-10-19 13:55:47,894 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:35448 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:55:50,588 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:35452 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:00,172 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:35458 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:05,230 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52132 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:07,866 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:56:09,722 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+2026-10-19 13:56:11,061 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54732 - "POST /workers/heartbeat HTTP/1.1" 200 OK
+2026-10-19 13:56:13,489 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:54738 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:16,663 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38470 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:19,200 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38478 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:21,603 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38492 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:23,361 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38508 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:24,566 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38812 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:27,244 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38818 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+2026-10-19 13:56:35,506 [INFO] httpx: HTTP Request: POST https://factual-stingray-170088.upstash.io "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38834 - "POST /worker/tasks/claim?machine_id=ott_e2e_1792392420957_worker HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63868]

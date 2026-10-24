@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "verifiedAt": "2026-10-19T07:54:31.811Z",
+  "checks": [
+    "same console identity blocked before registration; named sibling independent",
+    "browser form preserves edits across polling and saves limit",
+    "live increase/decrease of concurrency and pause without new claims",
+    "graceful stop finishes current matches and preserves supervisor/sibling",
+    "immediate stop confirmation returns unfinished job to real Redis queue",
+    "sibling resumes interrupted match using a new execution token, with complete replay",
+    "unexpected child crash auto-restarts while supervisor remains online",
+    "stopped state and limit survive supervisor restart",
+    "offline supervisor visible; limit saved offline; start rejected"
+  ],
+  "frontend": "http://127.0.0.1:3100",
+  "schema": "ott_e2e_1792396183709"
+}

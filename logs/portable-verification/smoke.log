@@ -1,0 +1,9 @@
+worker-python-1  | 2026-10-21 15:03:25,046 [INFO] httpx: HTTP Request: POST http://mock-backend:8000/workers/register "HTTP/1.0 200 OK"
+worker-python-1  | 2026-10-21 15:03:25,050 [INFO] httpx: HTTP Request: POST http://mock-backend:8000/workers/release-runtime "HTTP/1.0 200 OK"
+worker-python-1  | 2026-10-21 15:03:25,051 [INFO] supervisor: Supervisor 6b4aa9f9191a / local-python online
+worker-python-1  | 2026-10-21 15:03:25,053 [INFO] httpx: HTTP Request: POST http://mock-backend:8000/workers/supervisor-heartbeat "HTTP/1.0 200 OK"
+mock-backend-1   | {"event": "register", "worker_id": "244fdf011b13f550efaba966ae31a684"}
+mock-backend-1   | {"event": "heartbeat", "state": "starting"}
+mock-backend-1   | {"event": "heartbeat", "state": "stopped"}
+mock-backend-1   | {"event": "register", "worker_id": "244fdf011b13f550efaba966ae31a684"}
+mock-backend-1   | {"event": "heartbeat", "state": "starting"}

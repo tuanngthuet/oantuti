@@ -1,0 +1,21 @@
+{
+  "appliedAt": "2026-10-20T01:28:38.277Z",
+  "schema": "public",
+  "before": [
+    {
+      "users": 10,
+      "matches": 73,
+      "moves": 816,
+      "agents_digest": "3b9dae126b90ef819d376c05ed65d218"
+    }
+  ],
+  "after": [
+    {
+      "users": 10,
+      "matches": 73,
+      "moves": 816,
+      "agents_digest": "3b9dae126b90ef819d376c05ed65d218"
+    }
+  ],
+  "preserved": true
+}

@@ -1,0 +1,180 @@
+   ▲ Next.js 15.5.27
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 397ms
+The `fetchConnectionCache` option is deprecated (now always `true`)
+[friendly/result] error: Error [NeonDbError]: Error connecting to database: TypeError: fetch failed
+    at execute (.next/server/chunks/9608.js:30:2423)
+    at async j (.next/server/app/api/admin/agents/route.js:1:1494)
+    at async A (.next/server/app/api/friendly/result/route.js:12:830)
+    at async k (.next/server/app/api/friendly/result/route.js:34:2879)
+    at async g (.next/server/app/api/friendly/result/route.js:34:3882)
+    at async G (.next/server/app/api/friendly/result/route.js:34:5004) {
+  severity: undefined,
+  code: undefined,
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: [TypeError: fetch failed] {
+    [cause]: [AggregateError: ] { code: 'ETIMEDOUT' }
+  }
+}
+[friendly/result] error: Error [NeonDbError]: Error connecting to database: TypeError: fetch failed
+    at execute (.next/server/chunks/9608.js:30:2423)
+    at async j (.next/server/app/api/admin/agents/route.js:1:1494)
+    at async A (.next/server/app/api/friendly/result/route.js:12:830)
+    at async k (.next/server/app/api/friendly/result/route.js:34:2879)
+    at async g (.next/server/app/api/friendly/result/route.js:34:3882)
+    at async G (.next/server/app/api/friendly/result/route.js:34:5004) {
+  severity: undefined,
+  code: undefined,
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: [TypeError: fetch failed] {
+    [cause]: [AggregateError: ] { code: 'ETIMEDOUT' }
+  }
+}
+Rating dispatcher failed: Error [NeonDbError]: Error connecting to database: TypeError: fetch failed
+    at execute (.next/server/chunks/9608.js:30:2423)
+    at async (.next/server/app/api/admin/agents/route.js:1:1334)
+    at async g (.next/server/app/api/admin/agents/route.js:1:875)
+    at async g (.next/server/app/api/arena/agents/[id]/route.js:44:8008)
+    at async l (.next/server/app/api/arena/agents/[id]/route.js:81:67)
+    at async z (.next/server/app/api/rating/dispatch/route.js:38:1378)
+    at async k (.next/server/app/api/rating/dispatch/route.js:38:4220) {
+  severity: undefined,
+  code: undefined,
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: [TypeError: fetch failed] {
+    [cause]: [AggregateError: ] { code: 'ETIMEDOUT' }
+  }
+}
+Rating dispatcher failed: Error [NeonDbError]: Error connecting to database: TypeError: fetch failed
+    at execute (.next/server/chunks/9608.js:30:2423)
+    at async (.next/server/app/api/admin/agents/route.js:1:1334)
+    at async g (.next/server/app/api/admin/agents/route.js:1:875)
+    at async g (.next/server/app/api/arena/agents/[id]/route.js:44:8008)
+    at async l (.next/server/app/api/arena/agents/[id]/route.js:81:67)
+    at async z (.next/server/app/api/rating/dispatch/route.js:38:1378)
+    at async k (.next/server/app/api/rating/dispatch/route.js:38:4220) {
+  severity: undefined,
+  code: undefined,
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: [TypeError: fetch failed] {
+    [cause]: [AggregateError: ] { code: 'ETIMEDOUT' }
+  }
+}
+Rating dispatcher failed: Error [NeonDbError]: Error connecting to database: TypeError: fetch failed
+    at execute (.next/server/chunks/9608.js:30:2423)
+    at async (.next/server/app/api/admin/agents/route.js:1:1334)
+    at async g (.next/server/app/api/admin/agents/route.js:1:875)
+    at async g (.next/server/app/api/arena/agents/[id]/route.js:44:8008)
+    at async l (.next/server/app/api/arena/agents/[id]/route.js:81:67)
+    at async z (.next/server/app/api/rating/dispatch/route.js:38:1378)
+    at async k (.next/server/app/api/rating/dispatch/route.js:38:4220) {
+  severity: undefined,
+  code: undefined,
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: [TypeError: fetch failed] {
+    [cause]: [AggregateError: ] { code: 'ETIMEDOUT' }
+  }
+}
+Rating dispatcher failed: Error [NeonDbError]: Error connecting to database: TypeError: fetch failed
+    at execute (.next/server/chunks/9608.js:30:2423)
+    at async (.next/server/app/api/admin/agents/route.js:1:1334)
+    at async g (.next/server/app/api/admin/agents/route.js:1:875)
+    at async g (.next/server/app/api/arena/agents/[id]/route.js:44:8008)
+    at async l (.next/server/app/api/arena/agents/[id]/route.js:81:67)
+    at async z (.next/server/app/api/rating/dispatch/route.js:38:1378)
+    at async k (.next/server/app/api/rating/dispatch/route.js:38:4220) {
+  severity: undefined,
+  code: undefined,
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: [TypeError: fetch failed] {
+    [cause]: [AggregateError: ] { code: 'ETIMEDOUT' }
+  }
+}
+   ▲ Next.js 15.5.27
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 382ms
+The `fetchConnectionCache` option is deprecated (now always `true`)

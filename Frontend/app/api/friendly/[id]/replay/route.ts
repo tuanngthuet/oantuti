@@ -37,10 +37,12 @@ export async function GET(
   try {
     const matchRows = await withRetry(() => sql`
       SELECT
-        fm.id, fm.status, fm.outcome, fm.win_reason, fm.total_moves,
+        fm.id, fm.status, fm.outcome, CASE WHEN fm.is_infra_error THEN 'Lỗi hạ tầng'
+          WHEN fm.win_reason LIKE 'Agent P% lỗi:%' THEN 'Agent gặp lỗi thực thi'
+          WHEN fm.win_reason LIKE 'Agent P% nước không hợp lệ:%' THEN 'Agent trả nước không hợp lệ' ELSE fm.win_reason END AS win_reason, fm.total_moves,
         fm.is_infra_error, fm.created_at, fm.finished_at,
-        a1.id AS agent1_id, a1.agent_name AS agent1_name, u1.username AS agent1_username,
-        a2.id AS agent2_id, a2.agent_name AS agent2_name, u2.username AS agent2_username,
+        a1.id AS agent1_id, a1.agent_name AS agent1_name, (SELECT COALESCE((SELECT name FROM teams WHERE id=a1.team_id),u1.username)) AS agent1_username,
+        a2.id AS agent2_id, a2.agent_name AS agent2_name, (SELECT COALESCE((SELECT name FROM teams WHERE id=a2.team_id),u2.username)) AS agent2_username,
         w.agent_name AS winner_name
       FROM friendly_matches fm
       JOIN arena_agents a1 ON a1.id = fm.agent1_id
@@ -48,7 +50,7 @@ export async function GET(
       JOIN arena_agents a2 ON a2.id = fm.agent2_id
       JOIN users u2 ON u2.id = a2.user_id
       LEFT JOIN arena_agents w ON w.id = fm.winner_agent_id
-      WHERE fm.id = ${matchId} AND (fm.is_public = true OR fm.created_by = ${session.id})
+      WHERE fm.id = ${matchId} AND can_read_trial(${session.id},fm.id)
     `);
     if (matchRows.length === 0) return NextResponse.json({ error: "Trận không tồn tại." }, { status: 404 });
 

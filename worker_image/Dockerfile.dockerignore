@@ -1,0 +1,26 @@
+# Keep credentials, generated exports and unrelated app files out of build context.
+**
+!worker_image/
+!worker_image/requirements.txt
+!worker_image/worker.py
+!worker_image/supervisor.py
+!worker_image/runtime.py
+!worker_image/game_engine.py
+!worker_image/main.py
+!worker_image/runner.py
+!worker_image/sandbox_launcher.py
+!worker_image/__init__.py
+!worker_image/tests/
+!worker_image/tests/**
+!backend/
+!backend/requirements.txt
+!backend/app/
+!backend/app/**
+!backend/tests/
+!backend/tests/**
+!backend/scripts/
+!backend/scripts/repair_queue_duplicates.py
+**/__pycache__/
+**/*.pyc
+**/.env
+**/.env.*

@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-10-19T08:34:16.481Z",
+  "frontend": "http://127.0.0.1:3000",
+  "backend": "http://127.0.0.1:8000",
+  "schema": "public",
+  "redisKeyPrefix": "",
+  "processes": [
+    {
+      "name": "backend",
+      "pid": 207769
+    },
+    {
+      "name": "frontend",
+      "pid": 207770
+    },
+    {
+      "name": "worker",
+      "pid": 207806,
+      "workerId": "dbc6f7ab3b4c0be661e8442750242bae"
+    }
+  ],
+  "stoppedAt": "2026-10-21T09:57:58.099547+00:00",
+  "stopped": true
+}

@@ -1,94 +1,42 @@
 /**
- * lib/backend.ts
- *
- * BACKEND_URL được đọc theo thứ tự ưu tiên:
- *   1. DB (bảng app_settings, key = 'backend_url')  ← admin cập nhật từ dashboard
- *   2. Env var BACKEND_URL                           ← fallback khi DB chưa có giá trị
- *   3. "http://localhost:8000"                       ← dev local
- *
- * Cache in-memory 60s để không query DB mỗi request.
- * Khi admin cập nhật URL mới → cache tự hết hạn trong vòng 60s, không cần redeploy.
+ * HTTP client for calls to the FastAPI backend.
+ * Tất cả request từ Next.js server → backend đều gửi X-Internal-Secret header.
  */
-
-import { sql } from "@/lib/db";
-
-// ─── Cache ───────────────────────────────────────────────────────────────────
-
-const CACHE_TTL_MS = 60_000; // 60 giây
-
-let _cachedUrl: string | null = null;
-let _cacheExpiry: number = 0;
-
-/** Xóa cache ngay (gọi sau khi admin lưu URL mới). */
-export function invalidateBackendUrlCache() {
-  _cachedUrl = null;
-  _cacheExpiry = 0;
-}
-
-// ─── Lấy BACKEND_URL ─────────────────────────────────────────────────────────
-
-/** Env var fallback (vẫn giữ để dev local hoặc khi DB chưa seed). */
-const ENV_BACKEND_URL =
-  process.env.BACKEND_URL ||
-  process.env.NEXT_PUBLIC_BACKEND_URL ||
-  "http://localhost:8000";
-
-/**
- * Trả về BACKEND_URL hiện tại (DB → env → localhost).
- * Kết quả được cache 60s.
- */
-export async function getBackendUrl(): Promise<string> {
-  const now = Date.now();
-
-  // Cache còn hạn
-  if (_cachedUrl !== null && now < _cacheExpiry) {
-    return _cachedUrl;
-  }
-
-  // Query DB
-  try {
-    const rows = await sql`
-      SELECT value FROM app_settings WHERE key = 'backend_url' LIMIT 1
-    `;
-    const dbValue = (rows[0] as { value: string } | undefined)?.value?.trim();
-
-    if (dbValue) {
-      _cachedUrl = dbValue.replace(/\/+$/, ""); // bỏ trailing slash
-      _cacheExpiry = now + CACHE_TTL_MS;
-      return _cachedUrl;
-    }
-  } catch {
-    // DB lỗi hoặc bảng chưa được tạo → dùng fallback
-  }
-
-  // Fallback về env var
-  _cachedUrl = ENV_BACKEND_URL.replace(/\/+$/, "");
-  _cacheExpiry = now + CACHE_TTL_MS;
-  return _cachedUrl;
-}
-
-// ─── Timeout & error helpers ─────────────────────────────────────────────────
 
 const HEALTH_CHECK_TIMEOUT_MS = 5_000;
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 
 export const BACKEND_OFFLINE_MESSAGE =
-  "Backend đang offline. Tính năng này cần máy chủ cá nhân đang chạy. " +
-  "Vui lòng thử lại sau khi máy chủ được bật.";
+  "Backend đang offline. Vui lòng thử lại sau.";
 
-/**
- * Kiểm tra backend có online không bằng cách gọi /health.
- */
+export function getBackendUrl(): string {
+  return (
+    process.env.BACKEND_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "http://localhost:8000"
+  );
+}
+
+function getInternalSecret(): string {
+  return process.env.INTERNAL_BACKEND_SECRET ?? "";
+}
+
+export function backendOfflineResponse(detail?: string) {
+  return {
+    error: detail ?? BACKEND_OFFLINE_MESSAGE,
+    backend_offline: true,
+  };
+}
+
 export async function isBackendOnline(): Promise<boolean> {
   try {
-    const baseUrl = await getBackendUrl();
-    if (!baseUrl) return false;
-
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), HEALTH_CHECK_TIMEOUT_MS);
-    const res = await fetch(`${baseUrl}/health`, {
+    const timer = setTimeout(
+      () => controller.abort(),
+      HEALTH_CHECK_TIMEOUT_MS,
+    );
+    const res = await fetch(`${getBackendUrl()}/health`, {
       signal: controller.signal,
-      cache: "no-store",
     });
     clearTimeout(timer);
     return res.ok;
@@ -97,79 +45,57 @@ export async function isBackendOnline(): Promise<boolean> {
   }
 }
 
-/**
- * fetch() wrapper với timeout và error handling thân thiện.
- * Tự resolve BACKEND_URL từ DB mỗi lần gọi (dùng cache).
- */
 export async function backendFetch(
   path: string,
   options: RequestInit & { timeoutMs?: number } = {},
 ): Promise<
   | { ok: true; data: unknown; status: number }
-  | { ok: false; status: number; error: string; isOffline: boolean }
+  | { ok: false; status: number; error: string; isOffline?: boolean }
 > {
   const { timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS, ...fetchOptions } = options;
-
-  const baseUrl = await getBackendUrl();
-
-  if (!baseUrl) {
-    return {
-      ok: false,
-      status: 503,
-      error: "BACKEND_URL chưa được cấu hình. Vào Admin → Settings để cập nhật.",
-      isOffline: true,
-    };
-  }
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const url = `${getBackendUrl()}${path}`;
+  const secret = getInternalSecret();
 
   try {
-    const res = await fetch(`${baseUrl}${path}`, {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    // Merge in the internal secret header
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(fetchOptions.headers as Record<string, string> | undefined),
+    };
+    if (secret) {
+      headers["X-Internal-Secret"] = secret;
+    }
+
+    const res = await fetch(url, {
       ...fetchOptions,
+      headers,
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        ...(fetchOptions.headers ?? {}),
-      },
     });
     clearTimeout(timer);
 
     if (!res.ok) {
       let errorMsg = `HTTP ${res.status}`;
       try {
-        const body = await res.json() as { detail?: string; error?: string };
-        errorMsg = body.detail ?? body.error ?? errorMsg;
-      } catch { /* ignore */ }
-      return { ok: false, status: res.status, error: errorMsg, isOffline: false };
+        const body = await res.json() as { detail?: unknown; error?: unknown };
+        const detail = body.detail ?? body.error;
+        if (detail !== undefined) errorMsg = typeof detail === 'string' ? detail : JSON.stringify(detail);
+      } catch { /* ignore parse error */ }
+      return { ok: false, status: res.status, error: errorMsg };
     }
 
     const data = await res.json();
     return { ok: true, data, status: res.status };
   } catch (err) {
-    clearTimeout(timer);
-
-    const isOffline =
-      err instanceof Error &&
-      (err.name === "AbortError" ||
-        err.message.includes("fetch failed") ||
-        err.message.includes("ECONNREFUSED") ||
-        err.message.includes("ENOTFOUND") ||
-        err.message.includes("network") ||
-        err.message.includes("Failed to fetch"));
-
+    const isTimeout =
+      err instanceof Error && err.name === "AbortError";
     return {
       ok: false,
-      status: 503,
-      error: isOffline ? BACKEND_OFFLINE_MESSAGE : String(err),
-      isOffline,
+      status: 0,
+      error: isTimeout ? "Request timeout" : String(err),
+      isOffline: true,
     };
   }
-}
-
-export function backendOfflineResponse(detail?: string) {
-  return {
-    error: detail ?? BACKEND_OFFLINE_MESSAGE,
-    backend_offline: true,
-  };
 }

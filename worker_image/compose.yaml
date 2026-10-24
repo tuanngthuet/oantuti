@@ -1,0 +1,40 @@
+x-sandbox: &sandbox
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  # Bubblewrap requires nested user namespaces. Agents get a separate seccomp filter.
+  security_opt:
+    - no-new-privileges:true
+    - seccomp:unconfined
+    - apparmor:unconfined
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+  mem_limit: 1g
+  memswap_limit: 1g
+  cpus: 4
+  pids_limit: 256
+
+services:
+  worker-python:
+    <<: *sandbox
+    image: oantuti-worker-python:local
+    build:
+      context: ..
+      dockerfile: worker_image/Dockerfile
+    env_file: .env
+    restart: unless-stopped
+    stop_grace_period: 20s
+    volumes:
+      # Stable across container recreation and consistent with the old host worker.
+      - /etc/machine-id:/etc/machine-id:ro
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  worker-tests:
+    <<: *sandbox
+    profiles: [test]
+    image: oantuti-worker-python:test
+    build:
+      context: ..
+      dockerfile: worker_image/Dockerfile
+      target: test

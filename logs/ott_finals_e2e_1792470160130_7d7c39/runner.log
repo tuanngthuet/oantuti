@@ -1,0 +1,18 @@
+2026-10-20 11:22:49,313 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:49,593 finals Game 1 move 1 committed
+2026-10-20 11:22:49,762 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:50,293 finals Game 1 move 2 committed
+2026-10-20 11:22:50,466 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:50,768 finals Game 1 move 3 committed
+2026-10-20 11:22:50,935 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:51,156 finals Game 1 move 4 committed
+2026-10-20 11:22:51,319 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:51,548 finals Game 1 move 5 committed
+2026-10-20 11:22:51,713 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:52,034 finals Game 1 move 6 committed
+2026-10-20 11:22:52,199 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:52,429 finals Game 1 move 7 committed
+2026-10-20 11:22:52,594 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:52,855 finals Game 1 move 8 committed
+2026-10-20 11:22:57,452 httpx HTTP Request: POST http://127.0.0.1:46301/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:22:57,453 finals Game 9 needs admin: RuntimeError

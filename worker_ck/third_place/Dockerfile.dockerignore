@@ -1,0 +1,9 @@
+**
+!worker_ck/
+!worker_ck/__init__.py
+!worker_ck/requirements.txt
+!worker_ck/common/
+!worker_ck/common/*.py
+!worker_ck/third_place/
+!worker_ck/third_place/*.py
+!worker_ck/third_place/manifest.json

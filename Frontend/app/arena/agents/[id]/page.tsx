@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import RatingChart from '@/components/RatingChart';
+import { matchResult } from '@/lib/leaderboard';
 
 type AgentDetail = {
   id: number;
@@ -14,12 +16,14 @@ type AgentDetail = {
   status: string;
   validation_error: string | null;
   is_active: boolean;
+  is_public: boolean;
   wins: number;
   losses: number;
   draws: number;
   error_matches: number;
   elo: number;
   submitted_at: string;
+  team_id:number|null;team_name:string|null;scope_active:boolean;
 };
 
 type MatchRow = {
@@ -80,7 +84,9 @@ export default function AgentDetailPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/arena/agents/${agentId}`)
+    const controller = new AbortController();
+    setAgent(null); setError(''); setMatches([]); setVersions([]);
+    fetch(`/api/arena/agents/${agentId}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((d: { agent?: AgentDetail; matches?: MatchRow[]; versions?: VersionRow[]; error?: string }) => {
         if (d.error) {
@@ -91,7 +97,8 @@ export default function AgentDetailPage() {
         setMatches(d.matches ?? []);
         setVersions(d.versions ?? []);
       })
-      .catch(() => setError("Không thể tải thông tin agent."));
+      .catch(() => { if (!controller.signal.aborted) setError("Không thể tải thông tin agent."); });
+    return () => controller.abort();
   }, [agentId]);
 
   if (error)
@@ -148,6 +155,7 @@ export default function AgentDetailPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl font-extrabold text-[#1a1e29]">{agent.agent_name}</h1>
                 <span className="font-mono text-xs text-slate-500">v{agent.version}</span>
+                <span className="border px-2.5 py-0.5 text-xs">{agent.is_public?'Public · tham gia rating':'Riêng tư · chỉ thách đấu'}</span>
                 <span
                   className={`rounded-none border px-2.5 py-0.5 text-xs font-bold ${
                     STATUS_BADGE[agent.status] ?? "bg-slate-100 text-slate-700 border-slate-300"
@@ -195,6 +203,11 @@ export default function AgentDetailPage() {
           </div>
         </div>
 
+        <p className="mb-4 text-sm text-slate-500">Chủ sở hữu: {agent.team_name?`Team ${agent.team_name}`:`Cá nhân ${agent.username}`} · Tác giả: {agent.username}{!agent.scope_active&&' · Tạm ngừng tham gia rating'}</p>
+        <section className="mb-6 border border-[#ded8d3] bg-white p-5">
+          <div className="flex items-center justify-between gap-3"><h2 className="font-bold">Lịch sử điểm rating</h2><Link className="text-sm text-[#253B80] underline" href={`/arena/agents/${agentId}/history`}>▣ Game History · Xem tất cả trận →</Link></div>
+          <RatingChart agentId={Number(agentId)} />
+        </section>
         {/* Match history: Khung thẳng */}
         <div className="mb-6 overflow-hidden rounded-none border border-[#ded8d3] bg-white shadow-md">
           <div className="border-b border-[#ded8d3] bg-stone-50 px-5 py-3.5">
@@ -209,7 +222,7 @@ export default function AgentDetailPage() {
                   <tr className="border-b border-[#ded8d3] bg-stone-50 text-left text-xs font-bold text-slate-600">
                     <th className="px-4 py-3">Đối thủ</th>
                     <th className="px-4 py-3">Kết quả</th>
-                    <th className="px-4 py-3 text-right">ELO ±</th>
+                    <th className="px-4 py-3 text-right">Rating ±</th>
                     <th className="px-4 py-3 text-right">Nước</th>
                     <th className="px-4 py-3 text-right">Ngày</th>
                     <th className="px-4 py-3"></th>
@@ -221,26 +234,21 @@ export default function AgentDetailPage() {
                     const opponent = isAgent1
                       ? { name: m.agent2_name, user: m.agent2_username, id: m.agent2_id }
                       : { name: m.agent1_name, user: m.agent1_username, id: m.agent1_id };
-                    const myOutcome = m.is_infra_error
-                      ? "error"
-                      : m.outcome === "draw"
-                      ? "draw"
-                      : (m.outcome === "agent1" && isAgent1) || (m.outcome === "agent2" && !isAgent1)
-                      ? "win"
-                      : "loss";
+                    const myOutcome = matchResult(m, Number(agentId));
                     const eloDelta = isAgent1 ? m.elo_delta_agent1 : m.elo_delta_agent2;
-                    const resultBadge = {
+                    const resultBadge: Record<string, string> = {
                       win: "text-emerald-700 font-bold",
                       loss: "text-rose-700 font-bold",
                       draw: "text-slate-600 font-bold",
                       error: "text-amber-700 font-bold",
-                    }[myOutcome];
-                    const resultLabel = {
+                    };
+                    const resultLabel: Record<string, string> = {
                       win: "Thắng ✓",
                       loss: "Thua ✗",
                       draw: "Hòa",
                       error: "⚠️ Lỗi",
-                    }[myOutcome];
+                      scheduled: 'Đang chờ', running: 'Đang chạy', cancelled: 'Đã hủy', unknown: 'Chưa có kết quả',
+                    };
                     return (
                       <tr key={m.id} className="hover:bg-stone-50 transition">
                         <td className="px-4 py-2.5">
@@ -253,7 +261,7 @@ export default function AgentDetailPage() {
                           <p className="text-xs text-slate-500">@{opponent.user}</p>
                         </td>
                         <td className="px-4 py-2.5">
-                          <span className={`text-xs ${resultBadge}`}>{resultLabel}</span>
+                          <span className={`text-xs ${resultBadge[myOutcome] ?? 'text-slate-500'}`}>{resultLabel[myOutcome] ?? myOutcome}</span>
                           {m.win_reason && (
                             <p className="max-w-[200px] truncate text-xs text-slate-500">{m.win_reason}</p>
                           )}
@@ -279,7 +287,7 @@ export default function AgentDetailPage() {
                         <td className="px-4 py-2.5 text-right">
                           {m.status === "finished" && !m.is_infra_error && (
                             <Link
-                              href={`/arena/replay/${m.id}`}
+                              href={`/arena/replay/rating/${m.id}`}
                               className="rounded-none border border-[#253B80] px-2.5 py-1 text-xs font-bold text-[#253B80] hover:bg-[#253B80] hover:text-white transition"
                             >
                               ▶ Replay
@@ -308,7 +316,7 @@ export default function AgentDetailPage() {
                     <th className="px-4 py-3">Phiên bản</th>
                     <th className="px-4 py-3">Tên</th>
                     <th className="px-4 py-3">Trạng thái</th>
-                    <th className="px-4 py-3 text-right">ELO</th>
+                    <th className="px-4 py-3 text-right">Rating</th>
                     <th className="px-4 py-3 text-right">W / L / D</th>
                     <th className="px-4 py-3 text-right">Ngày nộp</th>
                   </tr>

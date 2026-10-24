@@ -1,0 +1,71 @@
+import {PGlite} from '@electric-sql/pglite';
+import {readFileSync} from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import {beforeAll,afterAll,it,expect} from 'vitest';
+import {finalsDemoImportQueries} from '../scripts/finals-demo-import-queries.mjs';
+let db:PGlite;
+const options=()=>({source:'demo_users',sourceFinals:'finals_source',sourceEdition:1,target:'finals',requestId:randomUUID(),name:'Demo completed season'});
+beforeAll(async()=>{
+ db=new PGlite();
+ for(const file of ['database.sql','arena_schema.sql','tournament_schema.sql','trueskill_migration.sql','friendly_challenge_migration.sql','execution_token_migration.sql','adaptive_rating_migration.sql','teams_migration.sql','private_trials_migration.sql'])await db.exec(readFileSync(file,'utf8'));
+ for(const schema of ['finals','finals_source'])for(const file of ['finals_migration.sql','finals_workers_migration.sql'])await db.exec('BEGIN;'+readFileSync(file,'utf8').replaceAll('__FINALS_SCHEMA__',schema)+'COMMIT;');
+ await db.exec(`INSERT INTO public.users(username,password_hash) SELECT 'real'||n,'real-password-hash' FROM generate_series(1,6)n;
+ INSERT INTO public.arena_agents(user_id,agent_name,code,status,is_active,is_public,rating) VALUES(2,'Real public','REAL_PRIVATE_CODE','active',true,true,2000);
+ INSERT INTO public.teams(name,creator_id) VALUES('Real team',3);
+ CREATE SCHEMA demo_users;
+ CREATE TABLE demo_users.users(LIKE public.users INCLUDING ALL);
+ CREATE TABLE demo_users.teams(LIKE public.teams INCLUDING ALL);
+ CREATE TABLE demo_users.team_members(LIKE public.team_members INCLUDING ALL);
+ CREATE TABLE demo_users.arena_agents(LIKE public.arena_agents INCLUDING ALL);
+ INSERT INTO demo_users.users(id,username,password_hash,is_admin) OVERRIDING SYSTEM VALUE VALUES(1,'admin','TEST_ADMIN_MUST_NOT_REPLACE_REAL',true),(2,'demo_owner','test-hash',false),(3,'demo_opponent','test-hash',false),(4,'demo_teammate','test-hash',false);
+ INSERT INTO demo_users.teams(id,name,creator_id) OVERRIDING SYSTEM VALUE VALUES(1,'Test team',2);
+ INSERT INTO demo_users.team_members(user_id,team_id) VALUES(2,1),(4,1);
+ INSERT INTO demo_users.arena_agents(id,user_id,team_id,agent_name,code,status,is_active,is_public) OVERRIDING SYSTEM VALUE VALUES(1,2,1,'Fixture1','FIXTURE1','active',true,true),(2,3,NULL,'Fixture2','FIXTURE2','active',true,true);
+ INSERT INTO finals_source.editions(name,request_id,created_by,status,finished_at) VALUES('Source finished','${randomUUID()}',1,'finished',now());
+ INSERT INTO finals_source.entrants VALUES(1,1,'team:1',1,'Test team','[{"id":2,"username":"demo_owner"},{"id":4,"username":"demo_teammate"}]','Fixture1',1,1000,'FIXTURE1','h1'),(1,2,'user:3',2,'Opponent','[]','Fixture2',1,1000,'FIXTURE2','h2');
+ INSERT INTO finals_source.ck_engines VALUES(4,repeat('a',64),'ott-finals-v1','{"engine_version":"ott-finals-v1","max_moves":150,"repetition":3}');
+ INSERT INTO finals_source.ck_rounds VALUES(1,4,1,'running',repeat('a',64),'{"engine_version":"ott-finals-v1","max_moves":150,"repetition":3}');
+ INSERT INTO finals_source.ck_submissions(edition_id,round,generation,seed,submitted_by,name,code,code_hash) VALUES(1,4,1,1,4,'Final agent one','CODE1','h1'),(1,4,1,2,3,'Final agent two','CODE2','h2');
+ INSERT INTO finals_source.ck_round_entrants VALUES(1,4,1,1),(1,4,2,2);
+ INSERT INTO finals_source.pairs(edition_id,round,slot,seed1,seed2,winner_seed,loser_seed,status,points1,points2) VALUES(1,4,1,1,2,1,2,'confirmed',2,0);
+ INSERT INTO finals_source.games(pair_id,leg,seed1,seed2,status,published,outcome,engine_digest,engine_version,round_rules,submission1,submission2) VALUES(1,1,1,2,'ready',true,'agent1',repeat('a',64),'ott-finals-v1','{}',1,2),(1,2,2,1,'ready',true,'agent2',repeat('a',64),'ott-finals-v1','{}',2,1);
+ INSERT INTO finals_source.attempts(game_id,source,status,worker_id,token,lease_until,move_count,outcome,state,initial_state) VALUES(1,'ck_worker','ready','round-final','${randomUUID()}',now(),1,'agent1','{"saved":true}','{"board":[]}'),(2,'ck_worker','ready','round-final','${randomUUID()}',now(),1,'agent2','{"saved":true}','{"board":[]}');
+ UPDATE finals_source.games SET active_attempt=id;
+ INSERT INTO finals_source.moves(attempt_id,seq,move,state) VALUES(1,1,'{"player":1,"from_col":1,"from_row":3,"to_col":0,"to_row":3,"piece_type":"ROCK"}','{"board":[]}'),(2,1,'{"player":2,"from_col":7,"from_row":5,"to_col":8,"to_row":5,"piece_type":"ROCK"}','{"board":[]}');
+ INSERT INTO finals_source.ck_jobs(kind,edition_id,round,generation,engine_digest,submission_id,status) VALUES('validation',1,4,1,repeat('a',64),1,'passed'),('validation',1,4,1,repeat('a',64),2,'passed');
+ INSERT INTO finals_source.ck_jobs(kind,edition_id,round,generation,engine_digest,game_id,attempt_id,status,worker_id,instance,token,lease_until) VALUES('match',1,4,1,repeat('a',64),1,1,'passed','round-final','${randomUUID()}','${randomUUID()}',now()),('match',1,4,1,repeat('a',64),2,2,'passed','round-final','${randomUUID()}','${randomUUID()}',now());
+ INSERT INTO finals_source.audit(edition_id,actor,action,payload) VALUES(1,1,'publish','{"game_id":1}'),(1,1,'confirm_pair','{"pair_id":1}');`);
+},30000);
+afterAll(async()=>db.close());
+async function importDemo(fail=false){return db.transaction(async tx=>{await tx.query('SET LOCAL search_path TO finals,pg_catalog');let result;for(const q of finalsDemoImportQueries(options()))result=await tx.query(q.text,q.values??[]);if(fail)throw Error('Forced rollback');return result!.rows[0] as Record<string,unknown>;});}
+it('rolls back every copied account and graph row if the transaction fails',async()=>{
+ const before=(await db.query('SELECT * FROM public.users ORDER BY id')).rows;
+ await expect(importDemo(true)).rejects.toThrow('Forced rollback');
+ expect((await db.query('SELECT * FROM public.users ORDER BY id')).rows).toEqual(before);
+ expect((await db.query<{n:number}>('SELECT count(*)::int AS n FROM finals.editions')).rows[0].n).toBe(0);
+});
+it('copies and remaps the complete graph, preserves real accounts/ratings, revokes runtime leases and retains historical identities',async()=>{
+ const beforeUsers=(await db.query('SELECT * FROM public.users ORDER BY id')).rows;
+ const beforeAgents=(await db.query('SELECT * FROM public.arena_agents ORDER BY id')).rows;
+ const result=await importDemo();const id=Number(result.edition_id);
+ expect(id).toBeGreaterThan(1); // The rollback consumed an ID; no sequence reset or collision reuse.
+ expect((await db.query('SELECT * FROM public.users WHERE id<=7 ORDER BY id')).rows).toEqual(beforeUsers);
+ expect((await db.query('SELECT * FROM public.arena_agents WHERE id=1')).rows).toEqual(beforeAgents);
+ const [team]=(await db.query<{id:number;creator_id:number}>("SELECT id,creator_id FROM public.teams WHERE name='Test team'")).rows;
+ expect(team.id).not.toBe(1);expect(team.creator_id).not.toBe(2);
+ const entries=(await db.query<{participant_key:string;members:{id:number;username:string}[]}>("SELECT participant_key,members FROM finals.entrants WHERE edition_id=$1 ORDER BY seed",[id])).rows;
+ expect(entries[0].participant_key).toBe('team:'+team.id);expect(entries[0].members.every(m=>m.id>7)).toBe(true);
+ expect((await db.query<{n:number}>("SELECT count(*)::int AS n FROM public.arena_agents WHERE is_active AND is_public")).rows[0].n).toBe(1);
+ expect((await db.query<{n:number}>("SELECT count(*)::int AS n FROM public.users WHERE is_admin")).rows[0].n).toBe(1);
+ expect((await db.query<{n:number}>("SELECT count(*)::int AS n FROM finals.moves")).rows[0].n).toBe(2);
+ expect((await db.query<{n:number}>("SELECT count(*)::int AS n FROM finals.ck_jobs WHERE token IS NOT NULL OR instance IS NOT NULL OR lease_until IS NOT NULL")).rows[0].n).toBe(0);
+ const games=(await db.query<{id:number;pair_id:number;active_attempt:number;submission1:number}>('SELECT * FROM finals.games ORDER BY id')).rows;
+ expect(games.every(g=>g.active_attempt>2&&g.submission1>2&&g.pair_id>1)).toBe(true);
+ const audit=(await db.query<{action:string;payload:{game_id?:number;pair_id?:number}}>("SELECT action,payload FROM finals.audit WHERE action IN('publish','confirm_pair') ORDER BY id")).rows;
+ expect(audit[0].payload.game_id).toBe(games[0].id);expect(audit[1].payload.pair_id).toBe(games[0].pair_id);
+ await expect(importDemo()).rejects.toThrow('DEMO_USERNAME_COLLISION');
+});
+it('rejects invalid schema/source choices before any SQL is executed',()=>{
+ expect(()=>finalsDemoImportQueries({...options(),source:'public'})).toThrow('Invalid demo source');
+ expect(()=>finalsDemoImportQueries({...options(),target:'finals;DROP SCHEMA public'})).toThrow('Invalid schema');
+});

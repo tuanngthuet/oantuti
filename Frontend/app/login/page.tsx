@@ -3,12 +3,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import AuthForm from "@/components/auth-form";
+import { safeReturnTo, authLink } from '@/lib/auth-navigation';
 import logoImg from "@/source/images/logo.png";
 import bannerImg from "@/source/images/banner.png";
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ redirect?: string | string[] }> }) {
+  const returnTo = safeReturnTo((await searchParams).redirect);
   const session = await getSession();
-  if (session) redirect("/dashboard");
+  if (session) redirect(returnTo);
 
   return (
     <main className="relative flex min-h-screen w-full items-center justify-center bg-[#F5F0ED] px-4 py-16 sm:px-6 lg:px-8">
@@ -64,11 +66,11 @@ export default async function LoginPage() {
                 Nhập tên đăng nhập và mật khẩu để tiếp tục.
               </p>
 
-              <AuthForm mode="login" />
+              <AuthForm mode="login" returnTo={returnTo} />
 
               <p className="mt-6 text-center text-sm text-slate-600">
                 Chưa có tài khoản?{" "}
-                <Link className="font-semibold text-[#253B80] hover:underline" href="/register">
+                <Link className="font-semibold text-[#253B80] hover:underline" href={authLink('register', returnTo)}>
                   Đăng ký
                 </Link>
               </p>

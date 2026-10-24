@@ -1,0 +1,698 @@
+{
+  "applied": true,
+  "appliedAt": "2026-10-21T09:50:57.697Z",
+  "source": "ott_ck_season_1792574598432_346bd8",
+  "sourceFinals": "finals_ck_season_1792574598432_346bd8",
+  "target": "finals",
+  "sourceEdition": 1,
+  "editionId": 2,
+  "name": "Demo Chung kết — mùa thử đã hoàn tất",
+  "requestId": "e1e6476b-ff27-43d1-9c8a-fcddf051f8da",
+  "mapping": {
+    "edition_id": "2",
+    "user_map": [
+      {
+        "source": 1,
+        "target": 1
+      },
+      {
+        "source": 2,
+        "target": 62
+      },
+      {
+        "source": 3,
+        "target": 63
+      },
+      {
+        "source": 4,
+        "target": 64
+      },
+      {
+        "source": 5,
+        "target": 65
+      },
+      {
+        "source": 6,
+        "target": 66
+      },
+      {
+        "source": 7,
+        "target": 67
+      },
+      {
+        "source": 8,
+        "target": 68
+      },
+      {
+        "source": 9,
+        "target": 69
+      },
+      {
+        "source": 10,
+        "target": 70
+      },
+      {
+        "source": 11,
+        "target": 71
+      },
+      {
+        "source": 12,
+        "target": 72
+      },
+      {
+        "source": 13,
+        "target": 73
+      },
+      {
+        "source": 14,
+        "target": 74
+      },
+      {
+        "source": 15,
+        "target": 75
+      },
+      {
+        "source": 16,
+        "target": 76
+      },
+      {
+        "source": 17,
+        "target": 77
+      },
+      {
+        "source": 18,
+        "target": 78
+      },
+      {
+        "source": 19,
+        "target": 79
+      }
+    ],
+    "team_map": [
+      {
+        "source": 1,
+        "target": 9
+      }
+    ],
+    "agent_map": [
+      {
+        "source": 1,
+        "target": 114
+      },
+      {
+        "source": 2,
+        "target": 115
+      },
+      {
+        "source": 3,
+        "target": 116
+      },
+      {
+        "source": 4,
+        "target": 117
+      },
+      {
+        "source": 5,
+        "target": 118
+      },
+      {
+        "source": 6,
+        "target": 119
+      },
+      {
+        "source": 7,
+        "target": 120
+      },
+      {
+        "source": 8,
+        "target": 121
+      },
+      {
+        "source": 9,
+        "target": 122
+      },
+      {
+        "source": 10,
+        "target": 123
+      },
+      {
+        "source": 11,
+        "target": 124
+      },
+      {
+        "source": 12,
+        "target": 125
+      },
+      {
+        "source": 13,
+        "target": 126
+      },
+      {
+        "source": 14,
+        "target": 127
+      },
+      {
+        "source": 15,
+        "target": 128
+      },
+      {
+        "source": 16,
+        "target": 129
+      }
+    ],
+    "pair_map": [
+      {
+        "source": 1,
+        "target": 17
+      },
+      {
+        "source": 2,
+        "target": 18
+      },
+      {
+        "source": 3,
+        "target": 19
+      },
+      {
+        "source": 4,
+        "target": 20
+      },
+      {
+        "source": 5,
+        "target": 21
+      },
+      {
+        "source": 6,
+        "target": 22
+      },
+      {
+        "source": 7,
+        "target": 23
+      },
+      {
+        "source": 8,
+        "target": 24
+      },
+      {
+        "source": 9,
+        "target": 25
+      },
+      {
+        "source": 10,
+        "target": 26
+      },
+      {
+        "source": 11,
+        "target": 27
+      },
+      {
+        "source": 12,
+        "target": 28
+      },
+      {
+        "source": 13,
+        "target": 29
+      },
+      {
+        "source": 14,
+        "target": 30
+      },
+      {
+        "source": 15,
+        "target": 31
+      },
+      {
+        "source": 16,
+        "target": 32
+      }
+    ],
+    "submission_map": [
+      {
+        "source": 1,
+        "target": 1
+      },
+      {
+        "source": 2,
+        "target": 2
+      },
+      {
+        "source": 3,
+        "target": 3
+      },
+      {
+        "source": 4,
+        "target": 4
+      },
+      {
+        "source": 5,
+        "target": 5
+      },
+      {
+        "source": 6,
+        "target": 6
+      },
+      {
+        "source": 7,
+        "target": 7
+      },
+      {
+        "source": 8,
+        "target": 8
+      },
+      {
+        "source": 9,
+        "target": 9
+      },
+      {
+        "source": 10,
+        "target": 10
+      },
+      {
+        "source": 11,
+        "target": 11
+      },
+      {
+        "source": 12,
+        "target": 12
+      },
+      {
+        "source": 13,
+        "target": 13
+      },
+      {
+        "source": 14,
+        "target": 14
+      },
+      {
+        "source": 15,
+        "target": 15
+      },
+      {
+        "source": 16,
+        "target": 16
+      },
+      {
+        "source": 17,
+        "target": 17
+      },
+      {
+        "source": 18,
+        "target": 18
+      },
+      {
+        "source": 19,
+        "target": 19
+      },
+      {
+        "source": 20,
+        "target": 20
+      },
+      {
+        "source": 21,
+        "target": 21
+      },
+      {
+        "source": 22,
+        "target": 22
+      },
+      {
+        "source": 23,
+        "target": 23
+      },
+      {
+        "source": 24,
+        "target": 24
+      },
+      {
+        "source": 25,
+        "target": 25
+      },
+      {
+        "source": 26,
+        "target": 26
+      },
+      {
+        "source": 27,
+        "target": 27
+      },
+      {
+        "source": 28,
+        "target": 28
+      },
+      {
+        "source": 29,
+        "target": 29
+      },
+      {
+        "source": 30,
+        "target": 30
+      },
+      {
+        "source": 31,
+        "target": 31
+      },
+      {
+        "source": 32,
+        "target": 32
+      }
+    ],
+    "game_map": [
+      {
+        "source": 1,
+        "target": 17
+      },
+      {
+        "source": 2,
+        "target": 18
+      },
+      {
+        "source": 3,
+        "target": 19
+      },
+      {
+        "source": 4,
+        "target": 20
+      },
+      {
+        "source": 5,
+        "target": 21
+      },
+      {
+        "source": 6,
+        "target": 22
+      },
+      {
+        "source": 7,
+        "target": 23
+      },
+      {
+        "source": 8,
+        "target": 24
+      },
+      {
+        "source": 9,
+        "target": 25
+      },
+      {
+        "source": 10,
+        "target": 26
+      },
+      {
+        "source": 11,
+        "target": 27
+      },
+      {
+        "source": 12,
+        "target": 28
+      },
+      {
+        "source": 13,
+        "target": 29
+      },
+      {
+        "source": 14,
+        "target": 30
+      },
+      {
+        "source": 15,
+        "target": 31
+      },
+      {
+        "source": 16,
+        "target": 32
+      },
+      {
+        "source": 17,
+        "target": 33
+      },
+      {
+        "source": 18,
+        "target": 34
+      },
+      {
+        "source": 19,
+        "target": 35
+      },
+      {
+        "source": 20,
+        "target": 36
+      },
+      {
+        "source": 21,
+        "target": 37
+      },
+      {
+        "source": 22,
+        "target": 38
+      },
+      {
+        "source": 23,
+        "target": 39
+      },
+      {
+        "source": 24,
+        "target": 40
+      },
+      {
+        "source": 25,
+        "target": 41
+      },
+      {
+        "source": 26,
+        "target": 42
+      },
+      {
+        "source": 27,
+        "target": 43
+      },
+      {
+        "source": 28,
+        "target": 44
+      },
+      {
+        "source": 29,
+        "target": 45
+      },
+      {
+        "source": 30,
+        "target": 46
+      },
+      {
+        "source": 31,
+        "target": 47
+      },
+      {
+        "source": 32,
+        "target": 48
+      }
+    ],
+    "attempt_map": [
+      {
+        "source": 1,
+        "target": 1
+      },
+      {
+        "source": 2,
+        "target": 2
+      },
+      {
+        "source": 3,
+        "target": 3
+      },
+      {
+        "source": 4,
+        "target": 4
+      },
+      {
+        "source": 5,
+        "target": 5
+      },
+      {
+        "source": 6,
+        "target": 6
+      },
+      {
+        "source": 7,
+        "target": 7
+      },
+      {
+        "source": 8,
+        "target": 8
+      },
+      {
+        "source": 9,
+        "target": 9
+      },
+      {
+        "source": 10,
+        "target": 10
+      },
+      {
+        "source": 11,
+        "target": 11
+      },
+      {
+        "source": 12,
+        "target": 12
+      },
+      {
+        "source": 13,
+        "target": 13
+      },
+      {
+        "source": 14,
+        "target": 14
+      },
+      {
+        "source": 15,
+        "target": 15
+      },
+      {
+        "source": 16,
+        "target": 16
+      },
+      {
+        "source": 17,
+        "target": 17
+      },
+      {
+        "source": 18,
+        "target": 18
+      },
+      {
+        "source": 19,
+        "target": 19
+      },
+      {
+        "source": 20,
+        "target": 20
+      },
+      {
+        "source": 21,
+        "target": 21
+      },
+      {
+        "source": 22,
+        "target": 22
+      },
+      {
+        "source": 23,
+        "target": 23
+      },
+      {
+        "source": 24,
+        "target": 24
+      },
+      {
+        "source": 25,
+        "target": 25
+      },
+      {
+        "source": 26,
+        "target": 26
+      },
+      {
+        "source": 27,
+        "target": 27
+      },
+      {
+        "source": 28,
+        "target": 28
+      },
+      {
+        "source": 29,
+        "target": 29
+      },
+      {
+        "source": 30,
+        "target": 30
+      },
+      {
+        "source": 31,
+        "target": 31
+      },
+      {
+        "source": 32,
+        "target": 32
+      }
+    ]
+  },
+  "backupFile": "/home/tuan/Oantuti/logs/ck-demo-import-1792576255454/before.json",
+  "logDir": "/home/tuan/Oantuti/logs/ck-demo-import-1792576255454",
+  "route": {
+    "host": "api.c-4.ap-southeast-1.aws.neon.tech",
+    "address": "3.0.27.201"
+  },
+  "normalBefore": {
+    "arena_matches": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "rated_matches": {
+      "count": 558,
+      "digest": "8dd990768faa6dd29b8bae001888df8f"
+    },
+    "friendly_matches": {
+      "count": 2,
+      "digest": "224ab8435345f799fee24ef86af730c4"
+    },
+    "match_move_history": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "rated_match_move_history": {
+      "count": 29175,
+      "digest": "349be07b00bb1d82525fa971fe63b093"
+    }
+  },
+  "verified": true,
+  "counts": {
+    "entrants": 16,
+    "pairs": 16,
+    "games": 32,
+    "moves": 348
+  },
+  "normalAfter": {
+    "arena_matches": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "rated_matches": {
+      "count": 558,
+      "digest": "8dd990768faa6dd29b8bae001888df8f"
+    },
+    "friendly_matches": {
+      "count": 2,
+      "digest": "224ab8435345f799fee24ef86af730c4"
+    },
+    "match_move_history": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "rated_match_move_history": {
+      "count": 29175,
+      "digest": "349be07b00bb1d82525fa971fe63b093"
+    }
+  },
+  "existingAccountsAndAgentsPreserved": true,
+  "frontend": {
+    "url": "http://127.0.0.1:3000",
+    "pid": 1408084,
+    "databaseSchema": "public",
+    "finalsSchema": "finals",
+    "stopped": true
+  },
+  "hostVerified": true,
+  "url": "http://127.0.0.1:3000/finals/2",
+  "hostChecks": {
+    "games": 32,
+    "moves": 348,
+    "pairs": 16,
+    "sameSourceOutcomes": true,
+    "individualAndTeamOwnershipVerified": true,
+    "noNewAdmins": true,
+    "browserErrors": []
+  },
+  "stopped": true,
+  "stoppedAt": "2026-10-21T09:57:58.099547+00:00"
+}

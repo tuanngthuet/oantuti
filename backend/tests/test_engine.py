@@ -236,6 +236,17 @@ class TestMovement:
 
 
 class TestApplyMove:
+
+    @pytest.mark.parametrize("coordinate", [-100, -1, 9, 100, None, "1", 1.5, True])
+    @pytest.mark.parametrize("field", ["from_col", "from_row", "to_col", "to_row"])
+    def test_bad_coordinates_do_not_crash_or_mutate_board(self, field, coordinate):
+        engine = OTTGameEngine()
+        before = engine.get_state_dict()
+        coords = dict(from_col=1, from_row=3, to_col=0, to_row=3)
+        coords[field] = coordinate
+        result = engine.apply_move(Move(**coords))
+        assert result["success"] is False
+        assert engine.get_state_dict() == before
     """Kiểm thử thực hiện nước đi."""
 
     def test_simple_move_success(self):

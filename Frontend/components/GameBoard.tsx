@@ -79,6 +79,8 @@ function BoardCell({
   isLastFrom,
   isLastTo,
   cellSize,
+  obstacle=false,
+  bonus,
 }: {
   piece: Piece;
   col: number;
@@ -86,6 +88,8 @@ function BoardCell({
   isLastFrom: boolean;
   isLastTo: boolean;
   cellSize: number;
+  obstacle?: boolean;
+  bonus?: number;
 }) {
   // Bàn cờ caro màu giấy nhám sáng
   const isLight = (col + row) % 2 === 0;
@@ -125,6 +129,8 @@ function BoardCell({
         flexShrink: 0,
       }}
     >
+      {obstacle&&<span title="Chướng ngại" style={{position:'absolute',inset:2,background:'#475569',color:'white',display:'grid',placeItems:'center'}}>■</span>}
+      {bonus!==undefined&&<span title="Ô cộng điểm" style={{position:'absolute',top:1,left:2,color:'#854d0e',fontSize:11,zIndex:1}}>★{bonus}</span>}
       {/* Icon căn cứ */}
       {isBase && !piece && (
         <span
@@ -166,8 +172,12 @@ function BoardCell({
 export function GameBoard({
   board,
   lastMove,
+  terrain=[],
+  bonusCells=[],
 }: {
   board: Piece[];
+  terrain?: {col:number;row:number}[];
+  bonusCells?: {col:number;row:number;points?:number}[];
   lastMove?: { from_col: number; from_row: number; to_col: number; to_row: number } | null;
 }) {
   const CELL = 56;
@@ -227,6 +237,8 @@ export function GameBoard({
                   row={row}
                   isLastFrom={lastMove?.from_col === col && lastMove?.from_row === row}
                   isLastTo={lastMove?.to_col === col && lastMove?.to_row === row}
+                  obstacle={terrain.some(c=>c.col===col&&c.row===row)}
+                  bonus={bonusCells.find(c=>c.col===col&&c.row===row)?.points}
                   cellSize={CELL}
                 />
               );

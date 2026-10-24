@@ -1,0 +1,38 @@
+2026-10-20 11:13:35,799 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:36,160 finals Game 1 move 1 committed
+2026-10-20 11:13:36,319 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:36,874 finals Game 1 move 2 committed
+2026-10-20 11:13:37,041 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:37,387 finals Game 1 move 3 committed
+2026-10-20 11:13:37,553 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:37,774 finals Game 1 move 4 committed
+2026-10-20 11:13:37,944 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:38,200 finals Game 1 move 5 committed
+2026-10-20 11:13:38,365 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:38,702 finals Game 1 move 6 committed
+2026-10-20 11:13:38,869 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:39,074 finals Game 1 move 7 committed
+2026-10-20 11:13:39,245 httpx HTTP Request: POST http://127.0.0.1:38293/submissions "HTTP/1.1 200 OK"
+2026-10-20 11:13:39,500 finals Game 1 move 8 committed
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/tuan/Oantuti/finals_runner/__main__.py", line 126, in <module>
+    main()
+  File "/home/tuan/Oantuti/finals_runner/__main__.py", line 122, in main
+    asyncio.run(offline(args) if args.bundle else online(args))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/tuan/Oantuti/finals_runner/__main__.py", line 92, in online
+    await asyncio.to_thread(db.heartbeat, args.concurrency)
+  File "/usr/lib/python3.10/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/tuan/Oantuti/finals_runner/db.py", line 52, in heartbeat
+    raise RuntimeError('Worker ID already owned by another live process; choose FINALS_WORKER_ID')
+RuntimeError: Worker ID already owned by another live process; choose FINALS_WORKER_ID

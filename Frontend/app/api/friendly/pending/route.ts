@@ -49,7 +49,7 @@ export async function GET(request: Request) {
         LEFT JOIN users uo ON uo.id = fm.opponent_id
         WHERE fm.pending_backend = true
           AND fm.status = 'scheduled'
-          AND (fm.challenger_id = ${session.id} OR fm.opponent_id = ${session.id})
+          AND can_read_trial(${session.id},fm.id)
         ORDER BY fm.created_at ASC
         LIMIT 50
       `;

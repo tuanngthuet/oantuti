@@ -1,0 +1,33 @@
+{
+  "runId": "ott_e2e_1792395944400",
+  "schema": "ott_e2e_1792395944400",
+  "prefix": "ott_e2e_1792395944400:",
+  "logDir": "/home/tuan/Oantuti/logs/ott_e2e_1792395944400",
+  "buildDir": ".next-e2e",
+  "frontend": "http://127.0.0.1:3100",
+  "backend": "http://127.0.0.1:8100",
+  "processes": [
+    {
+      "name": "backend",
+      "pid": 84970,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792395944400/backend.log"
+    },
+    {
+      "name": "frontend",
+      "pid": 84971,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792395944400/frontend.log"
+    },
+    {
+      "name": "worker",
+      "pid": 85003,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792395944400/worker.log"
+    },
+    {
+      "name": "worker-beta",
+      "pid": 87788,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792395944400/worker-beta.log"
+    }
+  ],
+  "stopped": true,
+  "removedRedisKeys": 15
+}

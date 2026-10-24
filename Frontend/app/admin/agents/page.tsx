@@ -23,6 +23,8 @@ type Agent = {
   draws: number;
   error_matches: number;
   elo: number;
+  trueskill_mu: number;
+  trueskill_sigma: number;
   submitted_at: string;
   username: string;
   user_id: number;
@@ -50,7 +52,6 @@ export default function AdminAgentsPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [busy, setBusy] = useState<number | null>(null);
   const [error, setError] = useState("");
-  const [validating, setValidating] = useState<number | null>(null);
 
   const loadAgents = useCallback(async () => {
     setLoading(true);
@@ -76,30 +77,6 @@ export default function AdminAgentsPage() {
     loadAgents();
   }, [loadAgents]);
 
-  async function validateAgent(agent: Agent) {
-    setValidating(agent.id);
-    setError("");
-    try {
-      const res = await fetch(`/api/arena/agents/${agent.id}/activate`, {
-        method: "POST",
-      });
-      const data = (await res.json()) as {
-        ok?: boolean;
-        status?: string;
-        validation_error?: string;
-        error?: string;
-      };
-      if (!res.ok && res.status !== 200) {
-        setError(data.error ?? "Kích hoạt thất bại.");
-      }
-      await loadAgents();
-    } catch {
-      setError("Không thể kết nối backend để kiểm tra.");
-    } finally {
-      setValidating(null);
-    }
-  }
-
   async function patchStatus(agentId: number, status: string, validationError: string | null) {
     setBusy(agentId);
     setError("");
@@ -122,10 +99,6 @@ export default function AdminAgentsPage() {
     }
   }
 
-  async function handleActivate(agent: Agent) {
-    await validateAgent(agent);
-  }
-
   async function handleReject(agent: Agent) {
     const reason = prompt(
       `Lý do từ chối agent "${agent.agent_name}" (@${agent.username})?`,
@@ -136,7 +109,7 @@ export default function AdminAgentsPage() {
   }
 
   async function handleReset(agent: Agent) {
-    await patchStatus(agent.id, "pending", null);
+    await patchStatus(agent.id, "validating", null);
   }
 
   const pendingCount = agents.filter((a) => a.status === "pending").length;
@@ -150,7 +123,7 @@ export default function AdminAgentsPage() {
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
             <Link href="/dashboard" className="hover:text-[#253B80]">Dashboard</Link>
             <span>/</span>
-            <Link href="/admin/tournament" className="hover:text-[#253B80]">Tournament</Link>
+            <Link href="/admin/rating" className="hover:text-[#253B80]">TrueSkill Queue</Link>
             <span>/</span>
             <span className="text-[#1a1e29]">Duyệt Agent</span>
           </div>
@@ -161,9 +134,9 @@ export default function AdminAgentsPage() {
 
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-[#1a1e29]">🤖 Quản lý & Duyệt Agent</h1>
+            <h1 className="text-3xl font-extrabold text-[#1a1e29]">🤖 Quản lý Agent</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Kiểm duyệt các bot do người dùng nộp lên. Chỉ agent trạng thái active mới được ghép cặp thi đấu.
+              Agent tự duyệt qua self-play. Chỉ agent trạng thái active mới được ghép cặp thi đấu.
             </p>
           </div>
           <button
@@ -260,7 +233,16 @@ export default function AdminAgentsPage() {
                     )}
                     <div className="mt-2 flex flex-wrap gap-4 font-mono text-xs text-slate-600">
                       <span>
-                        ELO: <strong className="text-[#253B80]">{agent.elo}</strong>
+                        Rating: <strong className="text-[#253B80]">{agent.elo}</strong>
+                      </span>
+                      <span>
+                        μ: <strong>{Number(agent.trueskill_mu).toFixed(2)}</strong>
+                      </span>
+                      <span>
+                        σ: <strong>{Number(agent.trueskill_sigma).toFixed(2)}</strong>
+                      </span>
+                      <span>
+                        Tin cậy: <strong>{Math.max(0, Math.min(100, Math.round((1 - Number(agent.trueskill_sigma) / (25 / 3)) * 100)))}%</strong>
                       </span>
                       <span className="font-bold text-emerald-700">W:{agent.wins}</span>
                       <span className="font-bold text-rose-700">L:{agent.losses}</span>
@@ -275,17 +257,8 @@ export default function AdminAgentsPage() {
                   <div className="flex shrink-0 flex-wrap gap-2">
                     {(agent.status === "pending" || agent.status === "validating") && (
                       <button
-                        onClick={() => handleActivate(agent)}
-                        disabled={busy === agent.id || validating === agent.id}
-                        className="cursor-pointer rounded-none bg-emerald-700 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-800 disabled:opacity-50"
-                      >
-                        {validating === agent.id ? "⏳ Đang kiểm tra..." : "✅ Validate & Kích hoạt"}
-                      </button>
-                    )}
-                    {agent.status === "pending" && (
-                      <button
                         onClick={() => handleReject(agent)}
-                        disabled={busy === agent.id || validating === agent.id}
+                        disabled={busy === agent.id}
                         className="cursor-pointer rounded-none bg-rose-700 px-4 py-2 text-xs font-bold text-white transition hover:bg-rose-800 disabled:opacity-50"
                       >
                         ❌ Từ chối
@@ -306,7 +279,7 @@ export default function AdminAgentsPage() {
                         disabled={busy === agent.id}
                         className="cursor-pointer rounded-none border border-[#ded8d3] bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#253B80] disabled:opacity-50"
                       >
-                        ↩ Đặt lại Pending
+                        ↩ Tự kiểm tra lại
                       </button>
                     )}
                     <button

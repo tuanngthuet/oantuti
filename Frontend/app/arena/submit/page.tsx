@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect,useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { python } from "@codemirror/lang-python";
 import { oneDark } from "@codemirror/theme-one-dark";
 import Navbar from "@/components/Navbar";
+import { authLink } from '@/lib/auth-navigation';
 
 const CodeMirror = dynamic(() => import("@uiw/react-codemirror"), { ssr: false });
 
@@ -42,6 +43,7 @@ type AgentInfo = {
   status: string;
   validation_error: string | null;
   is_active: boolean;
+  is_public: boolean;
   elo: number;
   wins: number;
   losses: number;
@@ -58,6 +60,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 export default function ArenaSubmitPage() {
   const [agentName, setAgentName] = useState("");
+  const [isPublic,setIsPublic]=useState(false);
   const [description, setDescription] = useState("");
   const [code, setCode] = useState(AGENT_TEMPLATE);
   const [validating, setValidating] = useState(false);
@@ -66,10 +69,14 @@ export default function ArenaSubmitPage() {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [agents, setAgents] = useState<AgentInfo[] | null>(null);
+  const [scopeName,setScopeName]=useState('Đang kiểm tra tư cách…');
+  const [expectedScope,setExpectedScope]=useState<string|null>(null);
+  const [personal,setPersonal]=useState<AgentInfo[]>([]);
   const [loadingAgents, setLoadingAgents] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [nextVersion, setNextVersion] = useState<number | null>(null);
   const router = useRouter();
+  useEffect(()=>{const controller=new AbortController();fetch('/api/team',{signal:controller.signal}).then(async r=>{if(!r.ok)throw new Error();return r.json();}).then(d=>{setScopeName(d.team?`Team: ${d.team.name}`:'Cá nhân');setExpectedScope(d.team?`team:${d.team.id}`:`user:${d.user_id}`);}).catch(()=>{});return()=>controller.abort();},[]);
 
   async function handleValidate() {
     setValidating(true);
@@ -91,6 +98,7 @@ export default function ArenaSubmitPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if(!expectedScope){setMessage('Chưa xác định được tư cách nộp bài. Hãy tải lại trang.');return;}
     setMessage("");
     setSuccess(false);
     setSubmitting(true);
@@ -98,7 +106,7 @@ export default function ArenaSubmitPage() {
       const res = await fetch("/api/arena/agents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agent_name: agentName, description, code }),
+        body: JSON.stringify({ agent_name: agentName, description, code,expected_scope:expectedScope,is_public:isPublic }),
       });
       const data = (await res.json()) as {
         ok?: boolean;
@@ -109,14 +117,14 @@ export default function ArenaSubmitPage() {
       };
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("/login");
+          router.replace(authLink('login', window.location.pathname + window.location.search));
           return;
         }
-        setMessage(data.error ?? "Có lỗi xảy ra.");
+        setMessage((data.error ?? "Có lỗi xảy ra.")+(data.agent_id?` Agent đã nộp: #${data.agent_id}. Xem trong lịch sử bên dưới.`:''));
         return;
       }
       setSuccess(true);
-      setMessage(`✅ Agent "${data.agent_name}" v${data.version} đã nộp. Chờ admin duyệt.`);
+      setMessage(`✅ Agent "${data.agent_name}" v${data.version} đã nộp và đang tự kiểm tra.`);
       setAgentName("");
       setDescription("");
       setCode(AGENT_TEMPLATE);
@@ -134,10 +142,12 @@ export default function ArenaSubmitPage() {
     try {
       const res = await fetch("/api/arena/agents");
       if (res.status === 401) {
-        router.push("/login");
+        router.replace(authLink('login', window.location.pathname + window.location.search));
         return;
       }
-      const data = (await res.json()) as { agents?: AgentInfo[] };
+      const data = (await res.json()) as { agents?: AgentInfo[];team?:{name:string}|null;personal_agents?:AgentInfo[];scope?:string };
+      if(data.scope)setExpectedScope(data.scope);
+      setScopeName(data.team?`Team: ${data.team.name}`:'Cá nhân');setPersonal(data.personal_agents??[]);
       if (data.agents) {
         setAgents(data.agents);
         const maxVer = Math.max(0, ...data.agents.map((a) => a.version));
@@ -154,8 +164,9 @@ export default function ArenaSubmitPage() {
       <Navbar />
 
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6 border-b border-[#ded8d3] pb-6">
-          <div className="flex items-center gap-3 mb-2">
+        {/* Tiêu đề trang */}
+        <div className="mb-4 border-b border-[#ded8d3] pb-4">
+          <div className="flex items-center gap-3">
             <h1 className="text-3xl font-extrabold tracking-tight text-[#1a1e29] sm:text-4xl">
               🤖 Nộp Agent AI
             </h1>
@@ -163,20 +174,55 @@ export default function ArenaSubmitPage() {
               Arena OTTv2
             </span>
           </div>
-          <p className="text-sm text-slate-600">
-            Viết agent Python để tham gia OTTv2 Arena. Agent cần được admin duyệt trước khi thi đấu tính ELO.
-          </p>
         </div>
 
-        {/* Yêu cầu: Khung thẳng */}
-        <div className="mb-8 rounded-none border border-[#ded8d3] bg-white p-5 shadow-sm">
-          <p className="mb-2 text-sm font-bold text-[#1a1e29]">📖 Quy tắc Agent</p>
-          <ul className="space-y-1.5 text-xs text-slate-600">
-            <li>• Bàn cờ 9×9. Quân: ✊ ROCK &gt; ✌️ SCISSORS, ✋ PAPER &gt; ✊ ROCK, ✌️ SCISSORS &gt; ✋ PAPER</li>
-            <li>• P1 (Xanh) thắng khi chiếm ô i9 hoặc ăn hết 1 loại quân đối thủ. P2 ngược lại (chiếm a1).</li>
-            <li>• Hàm <code className="bg-stone-100 px-1 py-0.5 font-mono text-[#253B80] font-bold">def agent(observation, configuration)</code> là bắt buộc.</li>
-            <li>• Chạy an toàn trên Judge0 sandbox (Python 3). Timeout 10s/nước đi. Giới hạn 65,536 ký tự.</li>
-          </ul>
+        {/* Box Tư cách nộp bài ở bên dưới tiêu đề trang */}
+        <p className="mb-4 border border-[#ded8d3] bg-white p-3 text-sm">
+          Tư cách nộp bài: <strong>{scopeName}</strong>. Agent nộp cho team là tài sản chung của đội.
+        </p>
+
+        {!!personal.length && (
+          <section className="mb-5 border border-amber-200 bg-white p-4">
+            <h2 className="font-bold">Agent cá nhân giữ riêng · Tạm ngừng rating</h2>
+            <p className="my-2 text-xs text-slate-500">
+              Không tính vào team; chỉ bạn được xem code. Tham gia lại khi bạn trở về cá nhân, nếu agent vẫn hợp lệ.
+            </p>
+            {personal.map((a) => (
+              <details key={a.id} className="border-t py-2">
+                <summary>
+                  {a.agent_name} · v{a.version} · {a.elo} điểm
+                </summary>
+                <textarea
+                  aria-label={`Code cá nhân ${a.agent_name}`}
+                  className="mt-2 h-48 w-full border p-2 font-mono text-xs"
+                  value={a.code}
+                  readOnly
+                />
+              </details>
+            ))}
+          </section>
+        )}
+
+        {/* Yêu cầu: Khung thẳng chứa cả Quy tắc Agent và Quy tắc OTTv2Arena */}
+        <div className="mb-8 rounded-none border border-[#ded8d3] bg-white p-5 shadow-sm space-y-4">
+          <div>
+            <p className="mb-2 text-sm font-bold text-[#1a1e29]">📖 Quy tắc Agent</p>
+            <ul className="space-y-1.5 text-xs text-slate-600">
+              <li>• Bàn cờ 9×9. Quân: ✊ ROCK &gt; ✌️ SCISSORS, ✋ PAPER &gt; ✊ ROCK, ✌️ SCISSORS &gt; ✋ PAPER</li>
+              <li>• P1 (Xanh) thắng khi chiếm ô i9 hoặc ăn hết 1 loại quân đối thủ. P2 ngược lại (chiếm a1).</li>
+              <li>• Hàm <code className="bg-stone-100 px-1 py-0.5 font-mono text-[#253B80] font-bold">def agent(observation, configuration)</code> là bắt buộc.</li>
+              <li>• Chạy trong Python sandbox với giới hạn CPU, thời gian thực và bộ nhớ theo cấu hình worker. Code tối đa 65,536 ký tự.</li>
+            </ul>
+          </div>
+
+          <div className="border-t border-[#ded8d3] pt-3">
+            <p className="mb-2 text-sm font-bold text-[#1a1e29]">📖 Quy tắc OTTv2Arena</p>
+            <ul className="space-y-1.5 text-xs text-slate-600">
+              <li>• Agent luôn tự kiểm tra bằng self-play tối đa 60 nước.</li>
+              <li>• Hết giới hạn hoặc hòa lặp thế cờ mà không lỗi vẫn được duyệt.</li>
+              <li>• Chỉ agent public hợp lệ mới tham gia rating; agent riêng tư dùng để thách đấu.</li>
+            </ul>
+          </div>
         </div>
 
         {/* Form nộp: Khung thẳng */}
@@ -259,6 +305,8 @@ export default function ArenaSubmitPage() {
               )}
             </div>
 
+            <label className="block border bg-white p-4 text-sm"><input type="checkbox" checked={isPublic} onChange={e=>setIsPublic(e.target.checked)}/> Public agent để tham gia rating
+              <span className="mt-2 block text-slate-500">Mặc định riêng tư. Public không công khai mã nguồn và không thể chuyển lại riêng tư. Agent riêng tư hợp lệ có thể public sau trong lịch sử.</span></label>
             {message && (
               <p
                 role="alert"
@@ -320,6 +368,11 @@ export default function ArenaSubmitPage() {
                           {a.agent_name}
                         </Link>
                         <span className="font-mono text-xs text-slate-500">v{a.version}</span>
+                        <span className="border px-2 py-1 text-xs">{a.is_public?'Public · rating':'Riêng tư · thách đấu'}</span>
+                        {!a.is_public&&a.status==='active'&&a.is_active&&<button className="border px-2 py-1 text-xs text-blue-700" onClick={async()=>{
+                          if(!window.confirm('Public agent để tham gia rating? Không thể chuyển lại riêng tư; mã nguồn vẫn được giữ kín.'))return;
+                          try{const r=await fetch(`/api/arena/agents/${a.id}/publish`,{method:'POST'});const d=await r.json();if(!r.ok)throw Error(d.error);await loadAgents();}catch(e){setMessage(e instanceof Error?e.message:'Không thể public agent.');}
+                        }}>Public để rating</button>}
                         <span
                           className={`rounded-none border px-2 py-0.5 text-xs font-bold ${
                             STATUS_BADGE[a.status] ?? "bg-slate-100 text-slate-700 border-slate-300"
@@ -339,7 +392,7 @@ export default function ArenaSubmitPage() {
                       {a.description && <p className="mt-1 text-xs text-slate-600">{a.description}</p>}
                       <div className="mt-2 flex flex-wrap gap-4 text-xs font-mono text-slate-600">
                         <span>
-                          ELO: <span className="font-bold text-[#253B80]">{a.elo}</span>
+                          Rating: <span className="font-bold text-[#253B80]">{a.elo}</span>
                         </span>
                         <span className="font-bold text-emerald-700">W:{a.wins}</span>
                         <span className="font-bold text-rose-700">L:{a.losses}</span>

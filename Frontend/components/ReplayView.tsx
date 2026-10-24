@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { GameBoard, applyMove, flattenBoard, getPieceCounts, PIECE_EMOJI, type Piece } from "@/components/GameBoard";
 import Navbar from "@/components/Navbar";
@@ -48,10 +48,12 @@ export default function ReplayView({
   apiUrl,
   backLink,
   backLabel = "← Quay lại",
+  embedded = false,
 }: {
   apiUrl: string;
   backLink: string;
   backLabel?: string;
+  embedded?: boolean;
 }) {
   const [data, setData] = useState<ReplayData | null>(null);
   const [error, setError] = useState("");
@@ -61,7 +63,9 @@ export default function ReplayView({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    fetch(apiUrl)
+    const controller = new AbortController();
+    setData(null); setError(''); setPlaying(false); setCurrentStep(0);
+    fetch(apiUrl, { signal: controller.signal })
       .then((r) => r.json())
       .then((d: ReplayData | { error: string }) => {
         if ("error" in d) {
@@ -70,12 +74,12 @@ export default function ReplayView({
         }
         setData(d);
       })
-      .catch(() => setError("Không thể tải replay."));
+      .catch(() => { if (!controller.signal.aborted) setError("Không thể tải replay."); });
+    return () => controller.abort();
   }, [apiUrl]);
 
-  const boardStates = useRef<Piece[][]>([]);
-  useEffect(() => {
-    if (!data) return;
+  const boardStates = useMemo(() => {
+    if (!data) return [];
     const flat0 = flattenBoard(data.initial_board as Piece[][]);
     const states: Piece[][] = [flat0];
     let current = flat0;
@@ -83,12 +87,12 @@ export default function ReplayView({
       current = applyMove(current, mv);
       states.push(current);
     }
-    boardStates.current = states;
+    return states;
   }, [data]);
 
   const totalSteps = data?.moves.length ?? 0;
   const currentBoard =
-    boardStates.current[currentStep] ??
+    boardStates[currentStep] ??
     (data ? flattenBoard(data.initial_board as Piece[][]) : Array(81).fill(null));
   const currentMove = currentStep > 0 ? data?.moves[currentStep - 1] : null;
   const pieceCounts = getPieceCounts(currentBoard);
@@ -117,6 +121,7 @@ export default function ReplayView({
     };
   }, [playing, speed, totalSteps]);
 
+  if (error && embedded) return <p role="alert" className="p-8 text-rose-700">{error}</p>;
   if (error)
     return (
       <div className="min-h-screen bg-[#F5F0ED] text-[#1a1e29]">
@@ -135,6 +140,7 @@ export default function ReplayView({
       </div>
     );
 
+  if (!data && embedded) return <p role="status" className="p-8 text-slate-500">Đang tải replay…</p>;
   if (!data)
     return (
       <div className="min-h-screen bg-[#F5F0ED] text-[#1a1e29]">
@@ -149,11 +155,11 @@ export default function ReplayView({
   const isGameOver = currentStep === totalSteps && totalSteps > 0;
 
   return (
-    <div className="min-h-screen bg-[#F5F0ED] text-[#1a1e29]">
-      <Navbar />
+    <div className={`${embedded ? '' : 'min-h-screen'} bg-[#F5F0ED] text-[#1a1e29]`}>
+      {!embedded && <Navbar />}
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-center justify-between border-b border-[#ded8d3] pb-4">
+      <main className={embedded ? 'p-3 sm:p-5' : 'mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8'}>
+        {!embedded && <div className="mb-6 flex items-center justify-between border-b border-[#ded8d3] pb-4">
           <Link
             href={backLink}
             className="rounded-none border border-[#ded8d3] bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-[#253B80] hover:text-[#253B80]"
@@ -161,9 +167,9 @@ export default function ReplayView({
             {backLabel}
           </Link>
           <span className="font-mono text-xs font-bold text-slate-500">
-            Trận #{match.id} · {match.session_name ?? "Friendly"}
+            Trận #{match.id} · {match.session_name ?? "Replay"}
           </span>
-        </div>
+        </div>}
 
         {/* Match header: Khung thẳng */}
         <div className="mb-6 rounded-none border border-[#ded8d3] bg-white p-5 shadow-md">
@@ -215,7 +221,7 @@ export default function ReplayView({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_320px]">
+        <div className={`grid grid-cols-1 gap-6 ${embedded ? '2xl:grid-cols-[1fr_260px]' : 'xl:grid-cols-[1fr_320px]'}`}>
           {/* Board + controls */}
           <div className="rounded-none border border-[#ded8d3] bg-white p-5 shadow-md">
             {/* Piece counts: Khung thẳng */}
@@ -265,6 +271,7 @@ export default function ReplayView({
                 </span>
                 <input
                   type="range"
+                  aria-label="Nước đi replay"
                   min={0}
                   max={totalSteps}
                   value={currentStep}
@@ -336,9 +343,10 @@ export default function ReplayView({
 
               {/* Speed */}
               <div className="flex items-center justify-center gap-3 text-xs text-slate-600">
-                <span>Chậm</span>
+                <span>Nhanh</span>
                 <input
                   type="range"
+                  aria-label="Độ trễ mỗi nước (ms)"
                   min={100}
                   max={2000}
                   step={100}
@@ -346,7 +354,7 @@ export default function ReplayView({
                   onChange={(e) => setSpeed(Number(e.target.value))}
                   className="w-32 accent-[#253B80]"
                 />
-                <span>Nhanh</span>
+                <span>Chậm</span>
                 <span className="w-16 font-mono text-slate-500">{speed}ms/nước</span>
               </div>
             </div>

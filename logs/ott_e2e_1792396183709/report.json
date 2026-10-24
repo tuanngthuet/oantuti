@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "checks": [
+    "unauthenticated requests rejected",
+    "register, login, signed cookie and admin access",
+    "submit Python agents and execute self-play in real Judge0",
+    "continuous rating, TrueSkill update and persisted replay",
+    "friendly challenge, accept, queue, worker and replay",
+    "frontend pages and system status"
+  ],
+  "schema": "ott_e2e_1792396183709",
+  "prefix": "ott_e2e_1792396183709:",
+  "neonRoute": {
+    "host": "api.c-4.ap-southeast-1.aws.neon.tech",
+    "address": "3.0.27.201"
+  },
+  "services": [
+    {
+      "name": "backend",
+      "pid": 89972,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792396183709/backend.log"
+    },
+    {
+      "name": "frontend",
+      "pid": 89973,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792396183709/frontend.log"
+    },
+    {
+      "name": "worker",
+      "pid": 90005,
+      "log": "/home/tuan/Oantuti/logs/ott_e2e_1792396183709/worker.log"
+    }
+  ],
+  "frontend": "http://127.0.0.1:3100",
+  "backend": "http://127.0.0.1:8100",
+  "counts": {
+    "users": 4,
+    "agents": 3,
+    "rated_matches": 4,
+    "friendly_matches": 1
+  }
+}

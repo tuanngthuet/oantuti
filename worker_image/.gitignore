@@ -1,0 +1,10 @@
+.env
+venv/
+*.log
+__pycache__/
+.pytest_cache/
+portable/
+oantuti-worker.zip
+oantuti-worker-with-secrets.zip
+public-portable/
+.portable-*
