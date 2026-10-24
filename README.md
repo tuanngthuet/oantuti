@@ -9,298 +9,440 @@
   <img src="https://img.shields.io/badge/TailwindCSS-Brutalist-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
 </p>
 
----
 
-## 📑 Mục lục
-1. [Giới thiệu](#1-giới-thiệu)
-2. [Kiến trúc hệ thống](#2-kiến-trúc-hệ-thống)
-3. [Tài liệu thành phần (Sub-module Docs)](#3-tài-liệu-thành-phần-sub-module-docs)
-4. [Tính năng nổi bật](#4-tính-năng-nổi-bật)
-5. [Thể lệ cuộc thi & Luật chơi](#5-thể-lệ-cuộc-thi--luật-chơi)
-6. [Quy chuẩn kỹ thuật khi lập trình Agent](#6-quy-chuẩn-kỹ-thuật-khi-lập-trình-agent)
-7. [Quy trình tổ chức giải đấu](#7-quy-trình-tổ-chức-giải-đấu)
-8. [Hướng dẫn khởi chạy & Cài đặt](#8-hướng-dẫn-khởi-chạy--cài-đặt)
-9. [Thành viên thực hiện](#9-thành-viên-thực-hiện)
+Oantuti là hệ thống thi đấu bot Python trên bàn cờ Oẳn Tù Tì 9×9. Người chơi lập trình agent, nộp bài lên website, thử sức với agent khác và tham gia bảng xếp hạng TrueSkill. Hệ thống hỗ trợ thi đấu cá nhân, thi đấu theo đội và giải Chung kết top 16.
 
----
+Hệ thống được host bằng **hai project Vercel độc lập**: một project chạy **Next.js**, một project chạy **FastAPI**. Các trận đấu được thực thi trên máy worker có Docker, kết nối tới hai project qua HTTPS. Tài liệu này mô tả hệ thống và cách cài worker.
 
-## 1. Giới thiệu
+## Mục lục
 
-**OTTv2 Arena** (Oẳn Tù Tì v2) là nền tảng thi đấu và đánh giá năng lực tự động giữa các Agent AI. Dựa trên biến thể trò chơi dân gian Oẳn Tù Tì kết hợp cùng tư duy chiến thuật cờ bàn (board game) trên lưới 9×9, hệ thống cung cấp một sân chơi đối kháng khép kín, công bằng và khách quan cho sinh viên.
+- [Kiến trúc hệ thống](#kiến-trúc-hệ-thống)
+- [Luật chơi](#luật-chơi)
+- [Viết agent Python](#viết-agent-python)
+- [Tính năng người dùng](#tính-năng-người-dùng)
+- [Tính năng quản trị](#tính-năng-quản-trị)
+- [Cài đặt worker thường](#cài-đặt-worker-thường)
+- [Cài đặt worker Chung kết](#cài-đặt-worker-chung-kết)
+- [Cấu trúc repository](#cấu-trúc-repository)
 
-Dự án được xây dựng trong khuôn khổ môn học **Lập trình mạng (INT3304 3)** — Trường Đại học Công nghệ, ĐHQGHN (VNU-UET).
+## Kiến trúc hệ thống
 
-### 👥 Nhóm thực hiện: Nhóm 1
-1. **Nguyễn Thiên Tuấn**
-2. **Bùi Thanh Sơn**
-3. **Phạm Gia Hưng**
-4. **Nguyễn Văn Tuyên**
-
----
-
-## 2. Kiến trúc hệ thống
-
-Dự án áp dụng mô hình phân tán (Distributed Architecture), tách biệt giữa giao diện trực tuyến, cơ sở dữ liệu serverless và cụm máy chủ chấm giải cục bộ thông qua đường truyền bảo mật.
-
-### 2.1. Sơ đồ kiến trúc tổng quan
-
-```text
-               Người dùng (Trình duyệt Web)
-                            │
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│               Frontend (Next.js 15 App)                │  ← Always-online (Vercel)
-│  - Authentication, Quản lý tài khoản (JWT, Bcrypt)     │
-│  - Trình soạn thảo Code (CodeMirror Python)            │
-│  - Bảng xếp hạng ELO, Replay Player, Dashboard         │
-└──────────────┬──────────────────────────┬──────────────┘
-               │                          │
-        (Kết nối Database)         (Khi chạy trận / validate)
-               ▼                          ▼
-┌──────────────────────────────┐   ┌──────────────────────────────┐
-│       Neon PostgreSQL        │   │    Cloudflare Tunnel         │  ← Reverse Proxy HTTPS
-│       (Serverless DB)        │   └──────────────┬───────────────┘
-│  - Users, Agents, Elo Stats  │                  ▼
-│  - Matches, Moves Replay     │   ┌──────────────────────────────┐
-│  - Tournament Sessions       │   │    FastAPI Backend Server    │  ← Localhost :8000
-└──────────────────────────────┘   │  ├── Match Service (Vòng đời)│
-                                   │  ├── Game Engine (Pure Python│
-                                   │  └── Queue / Sandbox Adapter │
-                                   └──────────────┬───────────────┘
-                                                  ▼
-                                   ┌──────────────────────────────┐
-                                   │  Execution Sandbox / Worker  │  ← Docker Container
-                                   │  (Bubblewrap Isolation)      │
-                                   │  Thực thi Python 3 an toàn   │
-                                   │  Giới hạn RAM, CPU, Timeout  │
-                                   └──────────────────────────────┘
+```mermaid
+flowchart TD
+    U[Trình duyệt người dùng / admin] --> N[Project Vercel 1: Next.js]
+    N --> D[(Neon PostgreSQL)]
+    N -->|Tạo tác vụ / quản lý worker| F[Project Vercel 2: FastAPI]
+    F --> R[(Upstash Redis)]
+    W[Worker thường: Docker + Python + Bubblewrap] -->|Poll / claim / heartbeat / ACK| F
+    W -->|Kết quả và replay| N
+    C[5 loại worker Chung kết] -->|Nhận bài / nhận ván / trả kết quả| N
 ```
 
----
+| Thành phần | Công nghệ | Trách nhiệm |
+| --- | --- | --- |
+| Website và API nghiệp vụ | Next.js 15, React 19, TypeScript, Tailwind CSS | Giao diện, đăng nhập, phân quyền, quản lý đội/agent, xếp hạng, thách đấu, Chung kết và trang admin. |
+| API điều phối | FastAPI, Python | Nhận tác vụ từ Next.js; quản lý queue, đăng ký worker, heartbeat, quyền sở hữu tác vụ và điều khiển worker. |
+| Dữ liệu lâu dài | Neon PostgreSQL | Tài khoản, đội, mã nguồn agent, lịch sử kiểm tra, trận đấu, rating, replay và dữ liệu Chung kết. |
+| Hàng đợi và trạng thái điều phối | Upstash Redis qua REST | Tác vụ chờ, lease, heartbeat và cấu hình điều khiển worker thường. |
+| Worker thường | Docker, Python, Bubblewrap | Chạy self-play kiểm tra agent, trận rating và thách đấu; gửi kết quả về Next.js. |
+| Worker Chung kết | Docker, engine riêng từng vòng | Kiểm tra bài và chạy ván theo engine đã chọn của vòng; giao tiếp trực tiếp với Next.js bằng token riêng. |
 
-## 3. Tài liệu thành phần (Sub-module Docs)
+**Next.js vừa phục vụ giao diện vừa xử lý nghiệp vụ phía server**, với các API trong `Frontend/app/api/`. FastAPI đảm nhận điều phối thực thi. Mã Python của người chơi chạy trong sandbox trên worker, không chạy trong request Vercel. Worker thường không cần truy cập trực tiếp Neon hoặc nhận credential Redis.
 
-Để tìm hiểu sâu hơn về kiến trúc và cách thiết lập từng module con, vui lòng xem các tài liệu hướng dẫn chuyên biệt:
+### Luồng xử lý bài nộp và trận đấu
 
-| Phân hệ | Thư mục | Tài liệu chi tiết | Mô tả  |
-| :--- | :--- | :---: | :--- |
-| **Frontend Web** | [`Frontend/`](Frontend/) | [📄 Frontend Guide](Frontend/README.md) | Giao diện Next.js 15, CodeMirror, Replay Player, Finals UI. |
-| **Backend Server** | [`backend/`](backend/) | [📄 Backend Guide](backend/README.md) | FastAPI, pure Python engine 9x9, Queue, API Endpoints. |
-| **Sandbox Worker** | [`worker_image/`](worker_image/) | [📄 Worker Image Guide](worker_image/README.md) | Docker sandbox Bubblewrap cho giải Rating & Friendly. |
-| **Finals Workers** | [`worker_ck/`](worker_ck/) | [📄 Finals Worker Guide](worker_ck/README.md) | 5 cụm worker chấm Vòng Chung kết độc lập, mã hóa token. |
-| **Testing Kit** | [`local_runner/`](local_runner/) | [📄 Local Runner Guide](local_runner/README.md) | Bộ công cụ test bot offline, 0 dependencies, human mode. |
+1. Người dùng thao tác trên website; Next.js kiểm tra phiên đăng nhập, quyền sở hữu và lưu dữ liệu vào PostgreSQL.
+2. Next.js gửi tác vụ sang FastAPI bằng secret nội bộ. FastAPI đưa tác vụ vào Redis.
+3. Worker chủ động hỏi lấy việc, claim tác vụ và duy trì lease/heartbeat trong lúc chạy. Một lượt giao việc có một worker sở hữu.
+4. Worker chạy engine; mỗi lượt gọi agent trong một process Python mới được cách ly bằng Bubblewrap.
+5. Worker gửi kết quả và replay về API Next.js. Next.js cập nhật trạng thái bài nộp hoặc kết quả trận, rating và lịch sử tương ứng.
+6. Worker xác nhận hoàn thành tác vụ với backend. Cơ chế lease, retry và token thực thi giúp thu hồi tác vụ khi mất kết nối và ngăn callback cũ ghi đè kết quả.
 
----
+Worker chỉ cần kết nối ra ngoài để gọi API; không cần mở cổng public hay dùng tunnel trên máy worker. Có thể bổ sung nhiều máy worker dùng chung hai project Vercel để tăng năng lực xử lý.
 
-## 4. Tính năng nổi bật
+Luồng Chung kết độc lập: worker đúng vòng nhận việc từ API nội bộ Next.js, dùng đúng engine/checksum đã chọn và trả kết quả về đó; không đi qua queue Redis của worker thường.
 
-### 4.1. Dành cho Thí sinh (Người chơi)
-* **Xác thực an toàn:** Đăng ký, đăng nhập bảo mật bằng JWT lưu trong `HttpOnly Cookie`, mật khẩu được mã hóa chuẩn Bcrypt.
-* **Soạn thảo & Nộp Agent trực quan:**
-  * Trình soạn thảo tích hợp **CodeMirror** (hỗ trợ gợi ý cú pháp Python, giao diện One Dark, đếm dung lượng mã nguồn giới hạn 64KB).
-  * Chức năng **"🔍 Kiểm tra tính hợp lệ"**: Tự động gửi code vào Sandbox chạy thử nghiệm một lượt đi thực tế trước khi lưu chính thức.
-  * Quản lý phiên bản bot (`v1`, `v2`,...), theo dõi trạng thái phê duyệt (`Pending`, `Active`, `Rejected`).
-* **Đấu giao hữu trực quan (Friendly Match Realtime):**
-  * Tùy chọn 2 bot AI bất kỳ để thi đấu 1v1 ngay trên bàn cờ trực tiếp mà không ảnh hưởng điểm xếp hạng.
-  * Cập nhật từng nước đi theo thời gian thực mượt mà thông qua cơ chế **Server-Sent Events (SSE)**.
-* **Hệ thống Rank ELO & Bảng xếp hạng:**
-  * Hệ thống tính điểm ELO động phản ánh chính xác trình độ bot qua từng trận:
-    * 👑 **Grandmaster** (ELO ≥ 2000)
-    * 💎 **Master** (ELO ≥ 1800)
-    * 🔷 **Expert** (ELO ≥ 1600)
-    * 🟢 **Intermediate** (ELO ≥ 1400)
-    * ⚪ **Novice** (ELO < 1400)
-  * Thống kê trực quan số trận Thắng / Thua / Hòa và tỷ lệ thắng tổng quát.
-* **Trình phát lại ván cờ (Interactive Replay Player):**
-  * Tải và phát lại chi tiết từng lượt đi của bất kỳ ván đấu nào trong lịch sử.
-  * Thanh trượt tua thời gian, bộ nút điều khiển đa dạng (*Về đầu, Lùi bước, Tự động phát, Tiến bước, Về cuối*), tùy chỉnh tốc độ từ 100ms – 2000ms/bước.
+## Luật chơi
 
-### 4.2. Dành cho Ban tổ chức (Quản trị viên - Admin)
-* **Kiểm duyệt Agent:** Thẩm định mã nguồn của thí sinh, chạy thử nghiệm sandbox trước khi phê duyệt tham gia đấu giải chính thức.
-* **Quản trị Tournament & Worker Session:**
-  * Thiết lập phiên giải đấu, điều chỉnh số trận chạy song song (Concurrency).
-  * Bật/tắt các Worker tự động bốc thăm ghép cặp vòng tròn (Round-Robin).
-* **Playground Test Bot:** Giao diện ghép cặp thủ công nhanh chóng phục vụ mục đích gỡ lỗi (debug) và đánh giá chiến thuật.
-* **Quản lý & Cấu hình:** Xem toàn bộ lịch sử đấu, dọn dẹp dữ liệu rác, linh hoạt cập nhật URL kết nối Backend Tunnel.
+### Bàn cờ và quân cờ
 
----
+- Bàn cờ **9×9**, cột `a`–`i`, hàng `1`–`9`. Trong code, cột và hàng đều đánh số `0`–`8`.
+- Hai bên lần lượt đi, P1 đi trước. Mỗi bên có **10 quân**: 3 Búa, 4 Bao, 3 Kéo.
+- Mỗi nước di chuyển một quân sang ô liền kề theo một trong **8 hướng**, gồm ngang, dọc và chéo.
+- Có thể đi vào ô trống; chỉ được ăn quân đối phương mà loại quân của mình khắc chế. Không đi vào ô có quân mình, quân cùng loại của đối phương hoặc quân khắc chế mình.
 
-## 5. Thể lệ cuộc thi & Luật chơi
+| Quân | Giá trị trong code | Ăn được |
+| --- | --- | --- |
+| Búa ✊ | `ROCK` | Kéo |
+| Bao ✋ | `PAPER` | Búa |
+| Kéo ✌️ | `SCISSORS` | Bao |
 
-### 5.1. Quy chuẩn bàn cờ & Bố trí ban đầu
-* **Kích thước bàn cờ:** Bàn cờ lưới vuông **9 × 9 ô**, cột ký hiệu từ `a` đến `i` (chỉ số 0 đến 8), hàng ký hiệu từ `1` đến `9` (chỉ số 0 đến 8).
-* **Các loại quân cờ:** Mỗi người chơi sở hữu 10 quân cờ thuộc 3 chủng loại:
-  * ✊ **ĐẤM (ROCK):** 3 quân
-  * ✋ **LÁ (PAPER):** 4 quân
-  * ✌️ **KÉO (SCISSORS):** 3 quân
-* **Tọa độ xuất phát ban đầu:**
-  * **Người chơi 1 (P1 - Quân Xanh):** Xuất phát góc dưới bên trái, căn cứ nhà cần bảo vệ tại **`a1`**, mục tiêu đánh chiếm là căn cứ **`i9`**.
-    * ✌️ Kéo (3): `5c`, `4d`, `3e`
-    * ✋ Lá (4): `5b`, `4c`, `3d`, `2e`
-    * ✊ Đấm (3): `4b`, `3c`, `2d`
-  * **Người chơi 2 (P2 - Quân Đỏ):** Xuất phát góc trên bên phải, căn cứ nhà cần bảo vệ tại **`i9`**, mục tiêu đánh chiếm là căn cứ **`a1`**.
-    * ✌️ Kéo (3): `7e`, `6f`, `5g`
-    * ✋ Lá (4): `8e`, `7f`, `6g`, `5h`
-    * ✊ Đấm (3): `8f`, `7g`, `6h`
+Vị trí khởi đầu, theo ký hiệu cột trước rồi hàng:
 
-### 5.2. Quy tắc di chuyển & Cơ chế ăn quân
-* **Di chuyển:** Mỗi lượt, một quân cờ có thể di chuyển **1 ô** theo **8 hướng** (ngang, dọc, chéo – tương tự như nước đi của quân Vua trong cờ vua).
-* **Quy luật ăn quân (Tương khắc Oẳn Tù Tì):**
-  * ✊ **ĐẤM** ăn ✌️ **KÉO**
-  * ✋ **LÁ** ăn ✊ **ĐẤM**
-  * ✌️ **KÉO** ăn ✋ **LÁ**
-* **Ràng buộc di chuyển:**
-  * Hai quân **cùng loại không thể ăn nhau** (không thể đi vào ô có quân cùng loại của đối phương).
-  * Quân cờ **không được di chuyển vào ô đang có quân của phe mình**.
+| Bên | Búa | Bao | Kéo |
+| --- | --- | --- | --- |
+| P1 | b4, c3, d2 | b5, c4, d3, e2 | c5, d4, e3 |
+| P2 | f8, g7, h6 | e8, f7, g6, h5 | e7, f6, g5 |
 
-### 5.3. Điều kiện định đoạt kết quả
-Trận đấu kết thúc ngay lập tức khi xuất hiện một trong các trường hợp sau:
+### Thắng, thua và hòa
 
-1. **Chiếm cứ điểm đối phương:**
-   * **P1 thắng:** Đưa bất kỳ một quân cờ nào của mình tiến vào căn cứ **`i9`**.
-   * **P2 thắng:** Đưa bất kỳ một quân cờ nào của mình tiến vào căn cứ **`a1`**.
-2. **Tuyệt diệt quân chủng đối phương:**
-   * Thắng ngay khi tiêu diệt hết toàn bộ một chủng loại quân bất kỳ của đối thủ (ăn sạch 3 quân Đấm, HOẶC sạch 4 quân Lá, HOẶC sạch 3 quân Kéo).
-3. **Xử thua kỹ thuật (Disqualification):**
-   * **Quá thời gian (Timeout):** Agent xử lý vượt quá giới hạn **10 giây / nước đi**.
-   * **Nước đi phạm quy (Illegal Move):** Trả về nước đi không nằm trong danh sách nước đi hợp lệ (`valid_moves`).
-   * **Lỗi thực thi (Runtime Error):** Mã nguồn phát sinh ngoại lệ không bắt được (Crash/Exception) trong môi trường Sandbox.
-   * **Đầu hàng:** Agent chủ động trả về `None` khi bàn cờ vẫn còn nước đi hợp lệ.
-4. **Hòa cờ (Draw):**
-   * Trận đấu vượt quá số lượt đi tối đa quy định (mặc định 200 – 300 nước) mà chưa có bên nào đạt điều kiện thắng.
+- **Chiếm căn cứ:** P1 đưa bất kỳ quân nào tới `i9`, hoặc P2 đưa quân tới `a1`.
+- **Triệt tiêu một loại quân:** ăn hết Búa, hết Bao hoặc hết Kéo của đối phương là thắng; không cần ăn hết toàn bộ quân.
+- **Lỗi agent:** lỗi Python, nước đi sai, không trả nước đi hoặc vượt giới hạn thực thi khiến agent thua trong trận thường. Lỗi khởi tạo sandbox được phân loại là lỗi hạ tầng.
+- **Rating và thách đấu:** tối đa **200 nước tổng hai bên**; chưa có bên thắng thì hòa. Worker thường hiện không kết thúc sớm vì lặp thế cờ.
+- **Self-play kiểm tra bài:** tối đa **60 nước**, nhằm kiểm tra khả năng thực thi và trả nước hợp lệ; hòa không đồng nghĩa bài lỗi.
+- **Chung kết:** dùng engine và bộ luật đã khóa của từng vòng. Các engine ban đầu dùng giới hạn **150 nước**, hòa khi cùng thế cờ và cùng bên tới lượt xuất hiện lần thứ ba. Cần xem thông tin vòng trước khi nộp bài.
 
----
+## Viết agent Python
 
-## 6. Quy chuẩn kỹ thuật khi lập trình Agent
-
-Mỗi Agent nộp lên phải là một tập lệnh Python 3 hợp lệ chứa hàm entry-point `agent(observation, configuration)` theo chuẩn:
+Người chơi lập trình hàm có tên `agent`:
 
 ```python
 def agent(observation, configuration):
-    """
-    Args:
-        observation (dict):
-            - valid_moves (list[dict]): Danh sách các nước đi hợp lệ ở lượt hiện tại:
-                [
-                    {
-                        "from_col": int,  # Cột bắt đầu (0-8, tương ứng a-i)
-                        "from_row": int,  # Hàng bắt đầu (0-8, tương ứng 1-9)
-                        "to_col": int,    # Cột đích (0-8)
-                        "to_row": int,    # Hàng đích (0-8)
-                        "is_capture": bool # Có phải nước đi ăn quân đối thủ không
-                    },
-                    ...
-                ]
-            - board (list[dict|None]): Mảng 1 chiều 81 ô (row-major: index = row * 9 + col).
-                Mỗi phần tử là None hoặc {"player": 1|2, "type": "ROCK"|"PAPER"|"SCISSORS"}
-            - current_player (int): Lượt của người chơi hiện tại (1 hoặc 2)
-            - piece_counts (dict): Số lượng quân còn lại của 2 bên:
-                {
-                    "1": {"ROCK": int, "PAPER": int, "SCISSORS": int},
-                    "2": {"ROCK": int, "PAPER": int, "SCISSORS": int}
-                }
-            - move_count (int): Tổng số nước đi đã diễn ra trong ván đấu
-        configuration (dict): Các thông số cấu hình bổ sung từ hệ thống (nếu có).
-
-    Returns:
-        dict: Nước đi được lựa chọn dưới dạng:
-            {"from_col": int, "from_row": int, "to_col": int, "to_row": int}
-        hoặc None (để chấp nhận đầu hàng).
-    """
     moves = observation.get("valid_moves", [])
     if not moves:
         return None
-    
-    # Chiến thuật ví dụ: Ưu tiên nước đi ăn quân đối phương
-    capture_moves = [m for m in moves if m.get("is_capture")]
-    selected_move = capture_moves[0] if capture_moves else moves[0]
 
+    # Ví dụ: ưu tiên ăn quân, nếu không thì đi nước đầu tiên.
+    chosen = next((move for move in moves if move["is_capture"]), moves[0])
     return {
-        "from_col": selected_move["from_col"],
-        "from_row": selected_move["from_row"],
-        "to_col": selected_move["to_col"],
-        "to_row": selected_move["to_row"]
+        "from_col": chosen["from_col"],
+        "from_row": chosen["from_row"],
+        "to_col": chosen["to_col"],
+        "to_row": chosen["to_row"],
     }
 ```
 
-### ⚙️ Giới hạn & Ràng buộc môi trường:
-* **Ngôn ngữ:** Python 3.10+
-* **Thư viện cho phép:** Chỉ được sử dụng các thư viện chuẩn (Standard Library) của Python như: `math`, `random`, `time`, `collections`, `heapq`, `copy`, `itertools`, `functools`... **Không hỗ trợ** các thư viện bên thứ ba cài ngoài như `numpy`, `pandas`, `scipy`...
-* **Giới hạn tài nguyên:**
-  * **Thời gian tính toán:** Tối đa **10 giây / lượt đi**.
-  * **Kích thước mã nguồn:** Tối đa **65,536 ký tự** (~64 KB).
-  * **Bộ nhớ:** Tối đa **128 MB RAM** cho mỗi tiến trình con trong Sandbox.
+| Trường trong observation | Ý nghĩa |
+| --- | --- |
+| `board` | Danh sách phẳng 81 ô; truy cập bằng `board[row * 9 + col]`. |
+| `board_2d` | Bàn cờ hai chiều, truy cập bằng `board_2d[row][col]`. |
+| Giá trị mỗi ô | `None` hoặc object như `{"player": 1, "type": "ROCK"}`. |
+| `current_player` | Bên đang tới lượt: `1` hoặc `2`. |
+| `valid_moves` | Các nước hợp lệ, gồm bốn tọa độ và cờ `is_capture`. |
+| `piece_counts` | Số quân mỗi loại của từng bên. Sau khi truyền qua JSON, khóa bên chơi là chuỗi `"1"`, `"2"`. |
+| `move_count` | Tổng số nước đã thực hiện. |
+| `game_over` | Trạng thái kết thúc ván. |
 
----
+`configuration` hiện là dict rỗng trong worker thường. Chung kết có thể bổ sung dữ liệu theo hợp đồng engine, gồm trường `finals` trong observation.
 
-## 7. Quy trình tổ chức giải đấu
+Agent phải **return** nước đi; chỉ `print` tọa độ không thay thế kết quả trả về. Trả `None` được xem là không có nước đi và dẫn tới thua trong trận thường.
 
-Hệ thống thi đấu của **OTTv2 Arena** cạnh tranh gồm 3 chế độ:
+### Môi trường chạy agent
 
-### 7.1. Chế độ Giao hữu (Private Friendly Match)
-* **Thử nghiệm chiến thuật:** Thí sinh tự do ghép cặp 1v1 giữa bot của mình với một bot công khai bất kỳ của đối thủ để kiểm tra tính hiệu quả của chiến thuật.
-* **Bảo mật Replay:** Chỉ người tạo trận hoặc thành viên cùng đội mới có quyền xem log và Replay ván cờ. Đối thủ **không nhận thông báo và không xem được kết quả/replay**, ngăn chặn hoàn toàn việc bị nghiên cứu chiến thuật trước giải.
-* **Quy chuẩn:** Giới hạn tối đa 200 nước/trận; cấp hạn mức 10 trận/ngày/tài khoản; kết quả **không làm thay đổi điểm ELO**.
+- Mỗi lượt tạo process mới: biến global và dữ liệu RAM không được giữ qua lượt sau.
+- Có Python standard library; không hỗ trợ tự cài thư viện ngoài như NumPy/Pandas.
+- Sandbox chặn mạng, tạo process/thread và ghi file; mã agent không nhìn thấy `.env`, secrets hoặc thư mục ứng dụng của worker.
+- Mỗi lượt có giới hạn CPU, thời gian thực, bộ nhớ và tổng stdout/stderr. Không nên in log quá nhiều.
 
-### 7.2. Vòng bảng & Bảng xếp hạng ELO (Best Agent Leaderboard)
-* **Matchmaking tự động:** Hệ thống Worker ngầm liên tục bốc thăm ghép cặp các Agent `Public` để thi đấu tích lũy điểm ELO theo công thức chuẩn.
-* **Cơ chế "Best Agent" trên BXH:**
-  * Thí sinh có thể nộp và phát triển nhiều phiên bản bot (`v1`, `v2`, `v3`...).
-  * Trên Bảng xếp hạng chung (Leaderboard), mỗi cá nhân hoặc đội **chỉ xuất hiện đúng 1 vị trí đại diện duy nhất** tương ứng với **Agent sở hữu ELO cao nhất (Best Agent)** của họ.
-  * *Ý nghĩa:* Ngăn chặn tình trạng một đội mạnh spam nhiều bot để chiếm trọn Top đầu, đảm bảo bảng xếp hạng đa dạng, khách quan và công bằng.
-* **Phân cấp danh hiệu ELO:** 👑 *Grandmaster* (≥ 2000), 💎 *Master* (≥ 1800), 🔷 *Expert* (≥ 1600), 🟢 *Intermediate* (≥ 1400), ⚪ *Novice* (< 1400).
-* **Chốt sổ vòng bảng:** Căn cứ bảng xếp hạng Best Agent tại thời điểm đóng sổ để chọn ra **Top 16 hạt giống** bước vào vòng Chung kết.
+Mặc định worker thường: CPU **10 giây/lượt**, thời gian thực **12 giây/lượt**, bộ nhớ địa chỉ **128 MiB**, stdout/stderr cộng lại **64 KiB**, mã nguồn tối đa **1 MiB**. Giới hạn bộ nhớ dùng `RLIMIT_AS`, không phải dung lượng RSS. Các giá trị do người vận hành cấu hình; worker Chung kết có cấu hình riêng.
 
-### 7.3. Vòng Chung kết (Finals Top 16 — Loại trực tiếp)
-* **Nhánh đấu 5 vòng:** Vòng 1/8 (`round_16`) $\rightarrow$ Tứ kết (`quarterfinal`) $\rightarrow$ Bán kết (`semifinal`) $\rightarrow$ Chung kết (`final`) & Tranh hạng ba (`third_place`).
-* **Thể thức 2 ván đổi bên (Home/Away Swap):** Mỗi cặp đấu gồm 2 ván, bắt buộc hoán đổi vị trí cầm quân Xanh (P1) và Đỏ (P2) để triệt tiêu lợi thế đi trước. Nếu hòa điểm (1 - 1), hạt giống có thứ hạng vòng bảng cao hơn sẽ giành quyền đi tiếp.
-* **Nộp bài độc lập từng vòng (Per-round Submissions):** Hệ thống **không tự động lấy code vòng bảng**. Mỗi vòng đấu knock-out, thí sinh phải nộp lại code riêng (được quyền chỉnh sửa để khắc chế đối thủ tiếp theo) và phải vượt qua bài kiểm tra Self-play với đúng Engine của vòng đó.
-* **5 Cụm Worker Sandbox độc lập:** Mỗi vòng chạy trên 1 container Worker riêng biệt với Bubblewrap sandbox cô lập hoàn toàn mạng, file hệ thống và bộ nhớ.
-* **Minh bạch & Trọng tài:** Admin khóa mã nguồn trước giờ đấu, tự động ghi nhận kết quả và công bố Replay công khai cho khán giả theo dõi.
+## Tính năng người dùng
 
----
+### Tài khoản và bắt đầu sử dụng
 
-## 8. Hướng dẫn khởi chạy & Cài đặt
+Người dùng có thể đăng ký, đăng nhập và đăng xuất. Mật khẩu được băm bằng bcrypt; phiên đăng nhập dùng JWT trong cookie. Khách có thể xem các trang công khai như dashboard, bảng xếp hạng và thông tin Chung kết đã công bố. Nộp bài và thách đấu yêu cầu đăng nhập.
 
-### 8.1. Yêu cầu hệ thống
-* Hệ điều hành: Linux (Ubuntu 20.04+ khuyến nghị) hoặc Windows 11 với WSL 2.
-* Python 3.10+ và Node.js 18.x / 20.x.
-* Docker Engine & Docker Compose.
+Quy trình tham gia:
 
-### 8.2. Cấu hình biến môi trường
-Sao chép các file cấu hình mẫu và cập nhật các thông số cần thiết:
+1. Đăng ký/đăng nhập; nếu thi đấu theo đội, tạo hoặc tham gia đội trước khi nộp bài.
+2. Vào **Nộp Agent** (`/arena/submit`), đặt tên, mô tả và nhập mã Python trong trình soạn thảo.
+3. Chọn giữ riêng tư hoặc công khai. Bài nộp được đưa vào self-play để tự kiểm tra.
+4. Theo dõi kết quả; nếu lỗi, đọc thông báo rồi sửa code và nộp phiên bản mới.
+5. Dùng agent hợp lệ để thách đấu; công khai agent khi muốn tham gia rating và bảng xếp hạng.
+6. Theo dõi lịch sử, biểu đồ điểm và replay để cải thiện thuật toán.
+
+### Quản lý agent và quyền riêng tư
+
+- Xem danh sách bài nộp, phiên bản, trạng thái kiểm tra và thông báo lỗi trong phạm vi cá nhân hoặc đội hiện tại.
+- Hệ thống nhận diện code trùng trong cùng phạm vi cá nhân/đội để tránh nộp lại cùng bài.
+- Agent mới mặc định riêng tư. Agent hợp lệ riêng tư có thể dùng để thử sức với agent công khai của người khác.
+- Có thể công khai agent đã hợp lệ. **Công khai là thao tác một chiều**: hiện không hỗ trợ chuyển lại thành riêng tư.
+- Công khai cho phép agent xuất hiện trong chức năng công khai và tham gia rating; không có nghĩa người khác được tải mã nguồn. Quyền đọc code vẫn theo chủ sở hữu, thành viên đội và admin.
+
+### Bảng xếp hạng TrueSkill
+
+Trang `/arena/leaderboard` hiển thị thành tích cá nhân và đội. Mỗi cá nhân/đội được đại diện bằng agent phù hợp theo chính sách xếp hạng; cần ít nhất **10 trận hợp lệ** để có thứ hạng chính thức.
+
+Điểm hiển thị khởi đầu là **1000**, tính từ sức mạnh ước lượng `mu` của TrueSkill. `sigma` thể hiện độ bất định và được dùng để tính mức tin cậy. Hệ thống tự ghép cặp đánh giá agent, không yêu cầu người chơi tự tạo trận rating.
+
+Scheduler điều chỉnh số trận theo nhu cầu đánh giá: mặc định agent ổn định khi có ít nhất 10 trận hợp lệ và `sigma ≤ 2.5`, ngân sách tối đa 20 trận/agent trong 24 giờ. Agent ổn định vẫn có thể làm đối thủ đánh giá agent mới; worker rảnh không nhất thiết tạo thêm trận rating.
+
+Khi rating hòa sau giới hạn nước, mỗi bên bị trừ **4–32 điểm** theo số quân địch còn lại và khoảng cách trung bình quân mình tới đích. Hòa vẫn giảm độ bất định. Mỗi cặp tối đa hai trận hòa trong 24 giờ trước khi scheduler tìm đối thủ khác. Thách đấu không áp dụng cập nhật rating này.
+
+Trang chi tiết agent và lịch sử cho phép xem thắng/thua/hòa, thay đổi điểm, biểu đồ rating, phiên bản và replay theo quyền truy cập.
+
+### Thách đấu riêng tư
+
+Tại `/arena/friendly`, chọn agent của cá nhân/đội mình và agent công khai hợp lệ của đối thủ để chạy một trận thử. Trận được xếp hàng trực tiếp, không cần gửi lời mời rồi chờ đối thủ chấp nhận.
+
+- Tối đa **10 trận/người/ngày**, đặt lại theo múi giờ `Asia/Ho_Chi_Minh`.
+- Chọn bên P1/P2 thông qua vị trí hai agent.
+- Kết quả và replay thuộc phạm vi truy cập của trận riêng tư, không tự đưa lên lịch sử công khai.
+- Không ảnh hưởng rating hoặc thứ hạng. Gửi lại cùng mã yêu cầu không tạo trận trùng hay trừ thêm lượt.
+
+### Đội thi đấu
+
+Trang `/team` hỗ trợ đội tối đa **3 thành viên**, gồm trưởng đội:
+
+- Tạo đội, cập nhật thông tin và trạng thái tuyển thành viên.
+- Trưởng đội gửi/hủy lời mời, duyệt hoặc từ chối yêu cầu xin vào và quản lý thành viên.
+- Người dùng nhận lời/từ chối lời mời, xin vào đội đang tuyển, hủy yêu cầu hoặc rời đội theo điều kiện hệ thống.
+- Thành viên cùng quản lý bài nộp thuộc đội. Khi đang ở đội, phạm vi nộp bài là đội hiện tại; bài cá nhân cũ vẫn được lưu.
+- Đội được xếp hạng như một đơn vị thi đấu. Chỉ admin có quyền giải thể đội; lịch sử agent, rating và replay được giữ lại.
+
+### Chung kết top 16
+
+Trang `/finals` hiển thị giải, nhánh đấu và kết quả/replay đã công bố. Người có suất vào trang giải `/finals/<id>` để nộp **Agent dự thi Chung kết**.
+
+- Nhánh đấu gồm vòng 16, tứ kết, bán kết, chung kết và tranh hạng ba. Hai nhánh cuối lấy kết quả từ bán kết.
+- Mỗi vòng phải nộp bài mới, có thể giữ nguyên code vòng trước. Agent rating không được tự lấy làm bài Chung kết.
+- Đối với suất đội, quyền nộp và xem code dựa trên danh sách thành viên tại thời điểm chốt suất.
+- Bản nộp mới nhất phải vượt qua kiểm tra của đúng engine vòng đó. Bản mới lỗi không tự quay về dùng bản cũ.
+- Khi admin khóa bài, các ván dùng snapshot mã nguồn và engine đã khóa. Mỗi cặp có hai ván đổi bên.
+- Kết quả cặp có hiệu lực sau khi admin xác nhận. Chung kết độc lập với rating và thách đấu thường.
+
+## Tính năng quản trị
+
+Các trang `/admin/*` và API quản trị yêu cầu tài khoản có quyền admin.
+
+| Trang | Chức năng |
+| --- | --- |
+| `/admin/agents` | Lọc agent theo trạng thái, xem mã nguồn/lỗi kiểm tra và chỉ số; từ chối bài, hủy kích hoạt hoặc yêu cầu tự kiểm tra lại. Duyệt hợp lệ thông thường được thực hiện tự động qua self-play. |
+| `/admin/teams` | Xem đội, trưởng đội, số thành viên/agent và trạng thái; giải thể đội, giữ dữ liệu lịch sử. |
+| `/admin/rating` | Theo dõi hàng đợi TrueSkill và tiến độ đánh giá; bật/tạm dừng tạo trận rating; dựng lại điểm từ lịch sử. |
+| `/admin/workers` | Xem worker thường, heartbeat, lỗi, tác vụ và slot; bật, tạm dừng/tiếp tục, dừng chờ hoàn tất hoặc dừng ngay; chỉnh concurrency riêng từng worker. |
+| `/admin/settings` | Kiểm tra backend, queue, worker và thống kê validation/rating/thách đấu; xem trận gần đây; đưa trận kẹt về pending hoặc error. URL backend được đọc từ biến môi trường. |
+| `/admin/finals` | Tạo giải/chốt top 16, chọn engine từng vòng, mở nhận bài, khóa bài/mở đấu, theo dõi ván, xác nhận kết quả cặp và công bố kết quả/replay. |
+
+**Tạm dừng scheduler rating** chỉ dừng tạo thêm rating, khác với dừng runtime worker. Worker còn hoạt động vẫn có thể xử lý các loại tác vụ khác.
+
+Với Chung kết, admin có thể ngắt/chạy lại ván lỗi, chỉ định kết quả, tải bundle bài đã khóa để chạy offline và nhập bản ghi JSON. Bản ghi nhập được kiểm tra cấu trúc và gắn nhãn tin admin; không được coi là bằng chứng tự động rằng mọi nước đi đúng luật. Worker Chung kết không tự xử thua hoặc tự retry lỗi ván thay quyết định của admin.
+
+## Cài đặt worker thường
+
+Worker này xử lý **validation, rating và thách đấu**. Có thể build từ repository để dùng mã nguồn hiện tại hoặc dùng ZIP có sẵn image.
+
+### Yêu cầu
+
+- Docker Engine và **Docker Compose v2** (`docker compose`).
+- Linux hỗ trợ **unprivileged user namespaces** để Bubblewrap tạo sandbox. Trên Windows, dùng Docker Desktop với WSL 2 và Linux containers.
+- Kết nối tới URL HTTPS của cả frontend Next.js và backend FastAPI.
+- `WORKER_SECRET` từ quản trị backend và `WORKER_CALLBACK_SECRET` từ quản trị frontend.
+- Compose mặc định giới hạn container ở **4 CPU, 1 GiB RAM**; cần tính thêm tài nguyên cho hệ điều hành/Docker và điều chỉnh concurrency phù hợp.
+
+Worker thường không cần Judge0, Docker-in-Docker, Docker socket hoặc cổng inbound public.
+
+### Cách 1: Chạy từ mã nguồn
+
+Từ thư mục gốc repository sau khi tải/clone mã nguồn:
+
 ```bash
-# 1. Cấu hình Backend
-cp backend/.env.example backend/.env
-
-# 2. Cấu hình Frontend
-cp Frontend/.env.example Frontend/.env.local
-
-# 3. Cấu hình Worker Sandbox
 cp worker_image/.env.example worker_image/.env
 ```
 
-### 8.3. Khởi động nhanh toàn bộ dịch vụ (Development)
-Sử dụng bộ kịch bản tự động được chuẩn bị sẵn trong thư mục gốc:
+Mở `worker_image/.env` và điền cấu hình thực:
 
-```bash
-# Bước 1: Cài đặt toàn bộ môi trường và dependencies
-./setup.sh
+```dotenv
+BACKEND_URL=https://YOUR-FASTAPI-PROJECT.vercel.app
+FRONTEND_URL=https://YOUR-NEXTJS-PROJECT.vercel.app
+WORKER_SECRET=SECRET_DA_CAU_HINH_O_BACKEND
+WORKER_CALLBACK_SECRET=SECRET_DA_CAU_HINH_O_FRONTEND
 
-# Bước 2: Khởi động toàn bộ các dịch vụ (Backend, Frontend, Sandbox)
-./start.sh
+WORKER_ID=local-python
+MAX_CONCURRENT=4
+POLL_INTERVAL=1
+
+AGENT_CPU_SECONDS=10
+AGENT_WALL_SECONDS=12
+AGENT_MEMORY_MB=128
+AGENT_OUTPUT_BYTES=65536
+AGENT_SOURCE_BYTES=1048576
 ```
 
-### 8.4. Các địa chỉ truy cập cục bộ:
-* **Frontend Web:** `http://localhost:3000`
-* **FastAPI Docs (Swagger UI):** `http://localhost:8000/docs`
-* **FastAPI ReDoc:** `http://localhost:8000/redoc`
-* **Sandbox Engine Health:** `http://localhost:8000/health`
+Thay các chuỗi mẫu bằng giá trị thật. Dùng URL gốc của từng project, không thêm `/api` vào cuối; không dùng `localhost` để chỉ tới dịch vụ Vercel.
 
-Để dừng toàn bộ dịch vụ đang chạy:
+| Biến | Cách sử dụng |
+| --- | --- |
+| `BACKEND_URL` | URL project FastAPI: đăng ký, nhận việc và heartbeat. |
+| `FRONTEND_URL` | URL project Next.js: gửi kết quả/callback và phối hợp điều phối. |
+| `WORKER_SECRET` | Phải giống `WORKER_SECRET` phía FastAPI. |
+| `WORKER_CALLBACK_SECRET` | Phải giống `WORKER_CALLBACK_SECRET` phía Next.js. |
+| `WORKER_ID` | Tên worker trên máy; định danh thực còn kết hợp machine identity. |
+| `MAX_CONCURRENT` | Số job đồng thời khi đăng ký lần đầu; sau đó lấy giá trị được lưu/điều khiển từ admin. |
+| `POLL_INTERVAL` | Khoảng nghỉ hỏi tác vụ, tính bằng giây. |
+| `AGENT_*` | Giới hạn mỗi lượt agent như phần môi trường chạy ở trên. |
+
+Chạy:
+
 ```bash
-./stop.sh
+bash dockerworker.sh
 ```
 
----
+Script tự build image, self-check sandbox và tạo lại container ở chế độ nền. Nếu self-check thất bại, cần xử lý lỗi host trước khi nhận bài; worker không tự chuyển sang chạy code không cách ly.
 
+Các lệnh vận hành:
+
+```bash
+bash dockerworker.sh status
+bash dockerworker.sh logs
+bash dockerworker.sh check
+bash dockerworker.sh stop
+bash dockerworker.sh update
+```
+
+`update` build lại từ mã nguồn hiện có và tạo lại container; cần cập nhật mã nguồn trước nếu muốn lấy bản mới. `Ctrl+C` khi xem log chỉ thoát trình xem log. Trên Linux, nếu chưa có quyền Docker, có thể chạy script với `sudo` theo cấu hình máy.
+
+Có thể dùng Compose trực tiếp thay script:
+
+```bash
+docker compose -f worker_image/compose.yaml build worker-python
+docker compose -f worker_image/compose.yaml run --rm worker-python --check
+docker compose -f worker_image/compose.yaml up -d worker-python
+```
+
+Chỉ thực hiện `up` khi self-check thành công.
+
+### Cách 2: Dùng ZIP có sẵn image
+
+Gói portable dành cho **Intel/AMD 64-bit** chứa image và script chạy, không cần build trên máy nhận. Gói công khai không chứa secrets. ZIP là một bản phát hành riêng; nếu cần mã nguồn/engine mới nhất trong repository, dùng cách 1 hoặc gói được quản trị viên xuất lại.
+
+**Linux:**
+
+```bash
+wget -O oantuti-worker.zip "https://github.com/tuanngthuet/oantuti/releases/download/worker-portable-v1/oantuti-worker.zip"
+unzip oantuti-worker.zip
+cd oantuti-worker
+cp .env.example .env
+```
+
+Mở `.env`, kiểm tra hai URL Vercel và điền `WORKER_SECRET`, `WORKER_CALLBACK_SECRET`, rồi chạy:
+
+```bash
+bash worker.sh
+bash worker.sh logs
+# Khi cần dừng:
+bash worker.sh stop
+```
+
+**Windows — PowerShell**, sau khi Docker Desktop đã chạy:
+
+```powershell
+curl.exe -fL "https://github.com/tuanngthuet/oantuti/releases/download/worker-portable-v1/oantuti-worker.zip" -o oantuti-worker.zip
+Expand-Archive .\oantuti-worker.zip -DestinationPath .
+cd oantuti-worker
+Copy-Item .env.example .env
+notepad .env
+```
+
+Lưu URL/secrets đúng trong `.env`, sau đó:
+
+```powershell
+.\worker.cmd
+.\worker.cmd logs
+# Khi cần dừng:
+.\worker.cmd stop
+```
+
+Script portable tự nạp image, kiểm tra sandbox và chạy nền. Định danh máy được giữ trong Docker volume.
+
+### Kiểm tra và vận hành
+
+1. Kiểm tra container bằng `status`, xem log để xác nhận đăng ký/heartbeat thành công.
+2. Mở `/admin/workers` trên frontend để kiểm tra worker, trạng thái và concurrency.
+3. Nếu admin đang lưu trạng thái dừng, bấm **Bật worker**. Khởi động lại container không xóa lựa chọn dừng trước đó.
+4. Nộp một agent mẫu, theo dõi self-play hoàn tất để kiểm tra cả queue và callback.
+
+Nhiều máy có thể dùng cùng tên `local-python`; trên **cùng một máy**, các instance phải có tên khác nhau. Compose từ mã nguồn dùng `/etc/machine-id` để giữ identity qua lần tạo lại container. Có thể đặt `MACHINE_ID` ổn định khi môi trường không cung cấp identity phù hợp; không dùng chung identity cho nhiều máy.
+
+Pause không ngắt trận đang chạy. Dừng chờ hoàn tất cho phép xử lý xong trước khi tắt runtime; dừng ngay sẽ hủy runner đang chạy. Supervisor vẫn online để nhận lệnh bật lại khi container còn chạy. Tắt container bằng script sẽ dừng cả supervisor.
+
+| Hiện tượng | Kiểm tra |
+| --- | --- |
+| Không kết nối Docker | Docker daemon/Desktop đã mở, Compose v2 có sẵn và tài khoản có quyền truy cập Docker. |
+| Self-check lỗi namespace/Bubblewrap | Host hoặc LXC/managed có chặn user namespaces không; Windows đã dùng Linux containers/WSL 2 chưa. |
+| API trả `401`/`403` | URL và secret tương ứng; kiểm tra cả chính sách bảo vệ truy cập của project. |
+| Online nhưng không nhận việc | Worker có pause/stop không, còn slot không, queue có tác vụ không; rating có đang bật và cần đánh giá thêm không. |
+| Đã chạy nhưng web chưa có kết quả | Callback tới Next.js, URL frontend, secret callback và log retry. |
+| Worker hay hết RAM | Giảm concurrency trên admin hoặc chỉnh tài nguyên container; giới hạn mỗi agent không phải tổng bộ nhớ cả worker. |
+
+Không commit/chia sẻ `.env` hoặc gói portable riêng có nhúng secrets. Xem thêm [worker_image/README.md](worker_image/README.md) và [worker_image/PORTABLE.md](worker_image/PORTABLE.md).
+
+## Cài đặt worker Chung kết
+
+Chỉ cần phần này khi tổ chức giải Chung kết. Worker thường không thay thế worker Chung kết. Có năm service:
+
+| Service | Vòng |
+| --- | --- |
+| `round_16` | Vòng 16 |
+| `quarterfinal` | Tứ kết |
+| `semifinal` | Bán kết |
+| `final` | Chung kết |
+| `third_place` | Tranh hạng ba |
+
+### Chuẩn bị credential
+
+Cần Docker/Compose, host hỗ trợ sandbox như worker thường và Python 3 để tạo cấu hình. Từ gốc repository:
+
+```bash
+python3 worker_ck/configure.py --url https://YOUR-NEXTJS-PROJECT.vercel.app
+```
+
+Lệnh tạo năm file `worker_ck/.env.<service>` và `worker_ck/.env.frontend` với token riêng từng vòng; từ chối ghi đè cấu hình đã tồn tại. Worker Chung kết dùng URL **Next.js**, không dùng URL FastAPI.
+
+Quản trị frontend cần cấu hình `CK_WORKER_TOKENS` khớp giá trị trong `.env.frontend` trước khi worker kết nối. Đây là JSON object có khóa `1`–`5`; khi nhập vào trường giá trị môi trường, dùng nội dung JSON, không kèm tiền tố `CK_WORKER_TOKENS=` hoặc dấu nháy đơn bao ngoài của file shell. Nếu hệ thống đã có bộ token, dùng credential được quản trị viên cấp thay vì tạo bộ mới làm lệch cấu hình.
+
+Database cần có schema Chung kết tương ứng. Quy trình nâng cấp schema và giữ dữ liệu được mô tả trong [worker_ck/README.md](worker_ck/README.md).
+
+### Build, kiểm tra và chạy
+
+```bash
+docker compose -f worker_ck/compose.yaml build
+```
+
+Kiểm tra đủ năm image:
+
+```bash
+docker compose -f worker_ck/compose.yaml run --rm round_16 --check
+docker compose -f worker_ck/compose.yaml run --rm quarterfinal --check
+docker compose -f worker_ck/compose.yaml run --rm semifinal --check
+docker compose -f worker_ck/compose.yaml run --rm final --check
+docker compose -f worker_ck/compose.yaml run --rm third_place --check
+```
+
+Sau khi tất cả self-check thành công:
+
+```bash
+docker compose -f worker_ck/compose.yaml up -d
+docker compose -f worker_ck/compose.yaml ps
+docker compose -f worker_ck/compose.yaml logs -f --tail 100
+# Khi cần dừng:
+docker compose -f worker_ck/compose.yaml stop
+```
+
+Mỗi instance mặc định xử lý một job; mỗi lượt agent mặc định CPU **2 giây**, thời gian thực **4 giây**, RAM địa chỉ **128 MiB**, output **64 KiB**, source **1 MiB**. Mỗi service có giới hạn container riêng; cần dự trù tài nguyên khi chạy cả năm.
+
+Admin chọn engine/checksum đã đăng ký cho đúng vòng tại `/admin/finals` trước khi mở nhận bài. Không có worker đúng engine thì bài tiếp tục chờ. Sau khi khóa bài/mở đấu, giữ đúng image/checksum phục vụ ván và chạy lại. Mỗi vòng dùng engine riêng; sửa engine một vòng không tự cập nhật các vòng khác.
+
+Xem [worker_ck/README.md](worker_ck/README.md) về cấu hình nhiều instance, engine, bundle offline và replay.
+
+## Cấu trúc repository
+
+```text
+Oantuti/
+├── Frontend/                 # Next.js: UI, API nghiệp vụ và PostgreSQL
+│   ├── app/                  # Trang user/admin và API route
+│   ├── components/           # Bàn cờ, replay, biểu đồ, giao diện Chung kết
+│   ├── lib/                  # Auth, database, rating, đội và Chung kết
+│   └── scripts/              # Migration, kiểm thử và dữ liệu demo
+├── backend/                  # FastAPI: điều phối và Redis
+│   ├── api/index.py          # Entrypoint cho Vercel
+│   └── app/                  # Router, cấu hình và dịch vụ điều phối
+├── worker_image/             # Worker thường, engine, sandbox, portable và test
+├── worker_ck/                # Khung chung và năm worker engine Chung kết
+├── local_runner/             # Công cụ runner cục bộ bổ sung
+├── dockerworker.sh           # Build/check/chạy/quản lý worker thường
+└── README.md
+```
+
+Mẫu cấu hình: [Frontend/.env.example](Frontend/.env.example), [backend/.env.example](backend/.env.example), [worker_image/.env.example](worker_image/.env.example) và [worker_ck/.env.example](worker_ck/.env.example). Secrets phải khớp đúng vai trò: `INTERNAL_BACKEND_SECRET` dùng cho Next.js → FastAPI, không thay thế hai secret của worker thường.
