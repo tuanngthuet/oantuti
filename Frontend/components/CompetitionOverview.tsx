@@ -749,7 +749,7 @@ cd oantuti/local_runner`}
                   <li>
                     <strong>Điểm hiển thị trên Leaderboard</strong>: Được tính toán theo nguyên tắc thận trọng (Conservative Rating):
                     <div className="mt-1 font-mono font-bold text-[#253B80]">
-                      Rating = max(0, round(100 × (μ - 3σ)))
+                      Rating = round(1000 + 40 × (μ - 25))
                     </div>
                   </li>
                 </ul>

@@ -96,9 +96,9 @@ class MatchTests(unittest.TestCase):
         self.assertEqual(record["status"], "error")
         self.assertIsNone(record["winner"])
         self.assertIn('> 1:', record["error"]["snippet"])
-        html = (self.app / "results" / record["id"] / "replay.html").read_text()
+        html = (self.app / "results" / record["id"] / "replay.html").read_text(encoding="utf-8")
         self.assertNotIn('/*REPLAY_DATA*/null', html)
-        saved = json.loads((self.app / "results" / record["id"] / "record.json").read_text())
+        saved = json.loads((self.app / "results" / record["id"] / "record.json").read_text(encoding="utf-8"))
         self.assertNotIn("snippet", saved["error"])
 
     def test_invalid_move_loses_and_preserves_board(self):
@@ -108,7 +108,7 @@ class MatchTests(unittest.TestCase):
         self.assertEqual(record["error"]["kind"], "IllegalMove")
 
     def test_real_sample_versus_fixed_greedy(self):
-        record = self.match((APP.parent / "my_agent.py").read_text())
+        record = self.match((APP.parent / "my_agent.py").read_text(encoding="utf-8"))
         self.assertIn(record["status"], ("finished", "error"))
         self.assertIsNone(record["error"])
         self.assertGreater(len(record["moves"]), 1)

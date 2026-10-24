@@ -12,6 +12,7 @@ import tempfile
 
 log = logging.getLogger('python-runner')
 READY = b'OTT_SANDBOX_READY\n'
+_TEMP_ROOT = '/dev/shm' if Path('/dev/shm').is_dir() and os.access('/dev/shm', os.W_OK | os.X_OK) else None
 
 
 class OutputLimitExceeded(Exception):
@@ -79,7 +80,7 @@ class PythonRunner:
         ready = False
         handshake = asyncio.Event()
         try:
-            with tempfile.TemporaryDirectory(prefix='ott-agent-') as directory:
+            with tempfile.TemporaryDirectory(prefix='ott-agent-', dir=_TEMP_ROOT) as directory:
                 path = Path(directory) / 'agent.py'
                 path.write_text(source, encoding='utf-8')
                 proc = await asyncio.create_subprocess_exec(*self.command(path),

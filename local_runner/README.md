@@ -46,12 +46,12 @@ python runner.py sample_agents/starter_agent.py sample_agents/random_agent.py
 
 ### B. Người tự tay đánh cờ với bot (Human Mode):
 ```bash
-python runner.py human sample_agents/greedy_agent.py
+python runner.py human sample_agents/greedy_agent.py --render
 ```
 
 ### C. Đấu đối kháng hàng loạt 50 ván đổi bên để đo Winrate:
 ```bash
-python runner.py sample_agents/greedy_agent.py sample_agents/random_agent.py --games 50
+python runner.py sample_agents/greedy_agent.py sample_agents/random_agent.py --rounds 50 --switch-sides --quiet
 ```
 
 ---

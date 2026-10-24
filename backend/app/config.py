@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     app_name: str = "OTTv2 Arena API"
     app_version: str = "2.0.0"
     debug: bool = False
-    max_moves_per_match: int = 500
+    max_moves_per_match: int = 200
 
     # CORS (cho frontend Vercel)
     cors_origins: list[str] = ["*"]

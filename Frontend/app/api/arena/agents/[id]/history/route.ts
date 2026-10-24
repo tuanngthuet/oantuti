@@ -28,16 +28,17 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         SELECT m.id, m.status, m.outcome, m.total_moves, m.is_infra_error,
           m.scheduled_at, m.finished_at,
           m.rating_delta_agent1 AS elo_delta_agent1, m.rating_delta_agent2 AS elo_delta_agent2,
-          a1.id AS agent1_id, a1.agent_name AS agent1_name, (SELECT COALESCE((SELECT name FROM teams WHERE id=a1.team_id),u1.username)) AS agent1_username,
-          a2.id AS agent2_id, a2.agent_name AS agent2_name, (SELECT COALESCE((SELECT name FROM teams WHERE id=a2.team_id),u2.username)) AS agent2_username,
+          a1.id AS agent1_id, a1.agent_name AS agent1_name, COALESCE(t1.name, u1.username) AS agent1_username,
+          a2.id AS agent2_id, a2.agent_name AS agent2_name, COALESCE(t2.name, u2.username) AS agent2_username,
           CASE WHEN m.is_infra_error OR m.status = 'error' THEN 'error'
             WHEN m.status <> 'finished' THEN m.status WHEN m.outcome = 'draw' THEN 'draw'
             WHEN m.outcome IS NULL THEN 'unknown'
             WHEN (m.outcome = 'agent1') = (m.agent1_id = ${id}) THEN 'win' ELSE 'loss' END AS result,
           (m.status = 'finished' AND NOT m.is_infra_error AND EXISTS
             (SELECT 1 FROM rated_match_move_history h WHERE h.rated_match_id = m.id)) AS replay_available
-        FROM rated_matches m JOIN arena_agents a1 ON a1.id = m.agent1_id JOIN users u1 ON u1.id = a1.user_id
-          JOIN arena_agents a2 ON a2.id = m.agent2_id JOIN users u2 ON u2.id = a2.user_id
+        FROM rated_matches m
+        JOIN arena_agents a1 ON a1.id = m.agent1_id JOIN users u1 ON u1.id = a1.user_id LEFT JOIN teams t1 ON t1.id = a1.team_id
+        JOIN arena_agents a2 ON a2.id = m.agent2_id JOIN users u2 ON u2.id = a2.user_id LEFT JOIN teams t2 ON t2.id = a2.team_id
         WHERE m.kind = 'rating' AND (m.agent1_id = ${id} OR m.agent2_id = ${id})
       ), filtered AS (SELECT * FROM history WHERE ${filter} = 'all' OR result = ${filter})
       SELECT (SELECT COUNT(*)::int FROM filtered) AS total,

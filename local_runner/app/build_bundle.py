@@ -11,10 +11,13 @@ def build():
     repo = local.parent
     sources = {
         "my_agent.py": local / "my_agent.py",
-        "Chay.cmd": local / "Chay.cmd",
-        **{f"app/{name}": app / name for name in (
-            "start.py", "agent_process.py", "index.html", "HUONG_DAN.html",
-            "Chay.sh", "HUONG_DAN_LINUX.html")},
+        "Chay.cmd": (local / "Chay.cmd") if (local / "Chay.cmd").exists() else (local / "run.cmd"),
+        "app/start.py": app / "start.py",
+        "app/agent_process.py": app / "agent_process.py",
+        "app/index.html": app / "index.html",
+        "app/HUONG_DAN.html": (app / "HUONG_DAN.html") if (app / "HUONG_DAN.html").exists() else (local / "HUONG_DAN.html"),
+        "app/Chay.sh": (app / "Chay.sh") if (app / "Chay.sh").exists() else (app / "run.sh"),
+        "app/HUONG_DAN_LINUX.html": app / "HUONG_DAN_LINUX.html",
         "app/game_engine.py": repo / "worker_image/game_engine.py",
         "app/greedy_agent.py": repo / "backend/agents/greedy_agent.py",
     }
